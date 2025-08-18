@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { ArrowDown, Github, Linkedin, Mail } from 'lucide-react';
 
 const Hero: React.FC = () => {
-  const keywords = ['technology', 'policy', 'markets', 'people', 'infrastructure'];
+  const keywords = ['technology', 'policy', 'arts', 'economics', 'people', 'infrastructure'];
   const [wordIndex, setWordIndex] = useState(0);
 
   useEffect(() => {
@@ -12,6 +12,7 @@ const Hero: React.FC = () => {
     return () => clearInterval(id);
   }, []);
 
+
   return (
     <section className="min-h-screen flex items-center justify-center relative overflow-hidden">
       {/* Background gradient (light) */}
@@ -19,19 +20,40 @@ const Hero: React.FC = () => {
       {/* Soft vignette */}
       <div className="pointer-events-none absolute inset-0 [background:radial-gradient(ellipse_at_center,transparent_0%,transparent_55%,rgba(0,0,0,0.08)_100%)]"></div>
       
-      {/* Animated particles (subtle) */}
+      {/* Tiny animated shapes with directional drift and soft pulsing */}
       <div className="absolute inset-0">
-        {[...Array(10)].map((_, i) => (
+        {[...Array(16)].map((_, i) => (
           <div
-            key={i}
-            className="absolute w-1 h-1 bg-blue-600/15 rounded-full animate-pulse"
+            key={`dr-${i}`}
+            className="absolute w-2 h-2 rounded-full bg-gradient-to-br from-blue-400/70 to-purple-400/70 shadow-sm shadow-blue-200/40 animate-drift-right"
             style={{
               left: `${Math.random() * 100}%`,
               top: `${Math.random() * 100}%`,
-              animationDelay: `${Math.random() * 3}s`,
-              animationDuration: `${2 + Math.random() * 4}s`
+              animationDelay: `${(Math.random() * 4).toFixed(2)}s`
             }}
-          ></div>
+          />
+        ))}
+        {[...Array(16)].map((_, i) => (
+          <div
+            key={`dl-${i}`}
+            className="absolute w-2 h-2 rotate-45 bg-gradient-to-br from-blue-300/70 to-purple-300/70 shadow-sm shadow-purple-200/40 animate-drift-left"
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+              animationDelay: `${(Math.random() * 4).toFixed(2)}s`
+            }}
+          />
+        ))}
+        {[...Array(10)].map((_, i) => (
+          <div
+            key={`pulse-${i}`}
+            className="absolute w-2.5 h-2.5 rounded-full bg-gradient-to-br from-blue-400/60 to-purple-400/60 shadow-md shadow-purple-200/40 animate-pulse-soft"
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+              animationDelay: `${(Math.random() * 3).toFixed(2)}s`
+            }}
+          />
         ))}
       </div>
 
@@ -42,7 +64,7 @@ const Hero: React.FC = () => {
             Malik Diyaolu
           </h1>
           <p className="text-lg md:text-xl text-gray-600 mb-4">
-            Work at the edge of <span key={wordIndex} className="text-gray-900 font-medium animate-fade-in">{keywords[wordIndex]}</span>.
+            Exploring my interests in <span key={wordIndex} className="text-gray-900 font-medium animate-fade-in">{keywords[wordIndex]}</span>.
           </p>
           <div className="h-px w-24 mx-auto mb-6 bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
         </div>
@@ -64,6 +86,8 @@ const Hero: React.FC = () => {
             </div>
           </div>
         </div>
+
+        {/* Gallery removed on Home */}
 
         {/* Social links */}
         <div className="flex justify-center space-x-6 mb-12">
@@ -93,9 +117,12 @@ const Hero: React.FC = () => {
           </a>
         </div>
 
-        {/* Scroll indicator */}
-        <div className="animate-bounce">
-          <ArrowDown size={32} className="mx-auto text-gray-500" />
+        {/* Scroll indicator - leads to about */}
+        <div 
+          className="animate-bounce cursor-pointer" 
+          onClick={() => window.location.hash = 'about'}
+        >
+          <ArrowDown size={32} className="mx-auto text-gray-500 hover:text-blue-600 transition-colors" />
         </div>
       </div>
     </section>

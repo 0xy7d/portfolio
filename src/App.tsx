@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react';
+import { NavigationProvider } from './context/NavigationContext';
+import NextButton from './components/NextButton';
 import Header from './components/Header';
 import Hero from './components/Hero';
 import About from './components/About';
@@ -63,12 +65,16 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-neutral-50 text-gray-900 font-sans">
-      <Header currentSection={currentSection} setCurrentSection={setCurrentSection} />
-      <main className="transition-all duration-700 ease-in-out pt-14 md:pt-0">
-        {renderSection()}
-      </main>
-    </div>
+    <NavigationProvider currentSection={currentSection as any} setCurrentSection={setCurrentSection as any}>
+      <div className="min-h-screen bg-neutral-50 text-gray-900 font-sans">
+        <Header currentSection={currentSection} setCurrentSection={setCurrentSection} />
+        <main className="transition-all duration-700 ease-in-out pt-14 md:pt-0">
+          {renderSection()}
+        </main>
+        {/* Next button visible on key sections */}
+        {['about','projects','writing','cv'].includes(currentSection) && <NextButton />}
+      </div>
+    </NavigationProvider>
   );
 }
 
