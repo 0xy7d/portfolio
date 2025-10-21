@@ -75,10 +75,10 @@
             font-size: clamp(1rem, 2.5vw, 1.15rem);
             line-height: 1.8;
             max-width: 750px;
-            margin-bottom: 25px;
+            margin: 0 auto 25px;
             display: flex;
             align-items: flex-start;
-            gap: 20px;
+            gap: 30px;
         }
 
         .profile-img {
@@ -86,8 +86,8 @@
         }
 
         .profile-img img {
-            width: clamp(120px, 20vw, 200px);
-            height: clamp(120px, 20vw, 200px);
+            width: clamp(180px, 25vw, 260px);
+            height: clamp(180px, 25vw, 260px);
             border-radius: 50%;
             object-fit: cover;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
@@ -115,39 +115,6 @@
         .project-desc {
             font-size: clamp(0.95rem, 2.2vw, 1.05rem);
             line-height: 1.7;
-        }
-        
-        .art-section {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 30px;
-            margin-top: 40px;
-        }
-        
-        .art-item {
-            background: #0a0a0a;
-            padding: clamp(20px, 3vw, 25px);
-            text-align: center;
-        }
-        
-        .art-icon {
-            font-size: clamp(2rem, 5vw, 2.5rem);
-            margin-bottom: 20px;
-            height: clamp(50px, 8vw, 60px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .art-title {
-            font-size: clamp(1.2rem, 3vw, 1.4rem);
-            margin-bottom: 15px;
-        }
-        
-        .art-desc {
-            font-size: clamp(0.95rem, 2.2vw, 1.05rem);
-            line-height: 1.7;
-            opacity: 0.9;
         }
         
         .contact-container {
@@ -186,28 +153,6 @@
             margin-top: 40px;
         }
         
-        .signature {
-            font-family: 'Brush Script MT', cursive;
-            font-size: clamp(1.4rem, 4vw, 1.8rem);
-            margin-top: 15px;
-            opacity: 0.7;
-        }
-        
-        .art-border {
-            position: relative;
-        }
-        
-        .art-border:before {
-            content: '';
-            position: absolute;
-            top: -15px;
-            left: -15px;
-            right: -15px;
-            bottom: -15px;
-            border: 1px solid #222;
-            pointer-events: none;
-        }
-        
         .project-card:hover {
             border-left: 2px solid #ccc;
         }
@@ -221,10 +166,10 @@
                 flex-direction: column;
                 align-items: center;
                 text-align: center;
+                gap: 20px;
             }
             
             .projects-container, 
-            .art-section,
             .contact-container {
                 grid-template-columns: 1fr;
                 gap: 20px;
@@ -245,11 +190,9 @@
                 padding: 15px;
             }
             
-            .art-border:before {
-                top: -10px;
-                left: -10px;
-                right: -10px;
-                bottom: -10px;
+            .profile-img img {
+                width: 200px;
+                height: 200px;
             }
         }
     </style>
@@ -259,7 +202,7 @@
         <header>
             <h1>Malik Diyaolu</h1>
             <div class="handle">0xy7d</div>
-            <div class="title">Product ML Engineer & Exploring the intersection of technology and creativity</div>
+            <div class="title">Product ML Engineer</div>
         </header>
 
         <section>
@@ -301,35 +244,6 @@
         </section>
 
         <section>
-            <h2>Artistic Practice</h2>
-            <div class="art-section">
-                <div class="art-item art-border">
-                    <div class="art-icon">📸</div>
-                    <div class="art-title">Photography</div>
-                    <div class="art-desc">
-                        Exploring urban landscapes through long exposure and monochrome techniques. Interested in how light and shadow reveal hidden structures in everyday environments.
-                    </div>
-                </div>
-                
-                <div class="art-item art-border">
-                    <div class="art-icon">🎨</div>
-                    <div class="art-title">Conceptual Art</div>
-                    <div class="art-desc">
-                        Creating installations that examine the relationship between digital systems and human perception. Current work explores data as physical material in sculptural form.
-                    </div>
-                </div>
-                
-                <div class="art-item art-border">
-                    <div class="art-icon">✏️</div>
-                    <div class="art-title">Visual Thinking</div>
-                    <div class="art-desc">
-                        Using sketching and diagramming to visualize complex ML concepts. Believing that clear visual representation is essential for effective technical communication.
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section>
             <h2>Contact</h2>
             <div class="contact-container">
                 <div class="contact-item">
@@ -343,10 +257,6 @@
                 <div class="contact-item">
                     <div class="contact-label">GitHub</div>
                     <a href="https://github.com/0xy7d" class="contact-link">0xy7d</a>
-                </div>
-                <div class="contact-item">
-                    <div class="contact-label">Art Portfolio</div>
-                    <a href="#" class="contact-link">View Gallery</a>
                 </div>
             </div>
         </section>
