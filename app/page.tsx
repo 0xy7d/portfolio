@@ -36,6 +36,13 @@ export default function Home() {
     setIsDark(!isDark)
   }
 
+  const setSectionRef =
+  (index: number) =>
+  (el: HTMLElement | null): void => {
+    sectionsRef.current[index] = el
+  }
+
+
   return (
     <div className="min-h-screen bg-background text-foreground relative font-mono">
       <nav className="fixed left-8 top-1/2 -translate-y-1/2 z-10 hidden lg:block">
@@ -56,7 +63,7 @@ export default function Home() {
       <main className="max-w-4xl mx-auto px-6 sm:px-8 lg:px-16">
         <header
           id="intro"
-          ref={(el) => (sectionsRef.current[0] = el)}
+          ref={setSectionRef(0)}
           className="min-h-screen flex items-center opacity-0"
         >
           <div className="grid lg:grid-cols-5 gap-12 sm:gap-16 w-full">
@@ -117,7 +124,7 @@ export default function Home() {
 
         <section
           id="work"
-          ref={(el) => (sectionsRef.current[1] = el)}
+          ref={setSectionRef(1)}
           className="min-h-screen py-20 sm:py-32 opacity-0 transition-opacity duration-1000" // ensure transition is smooth
         >
           <div className="space-y-12 sm:space-y-16">
@@ -256,7 +263,7 @@ export default function Home() {
 
         <section
           id="projects"
-          ref={(el) => (sectionsRef.current[4] = el)}
+          ref={setSectionRef(4)}
           className="min-h-screen py-20 sm:py-32 opacity-0"
         >
           <div className="space-y-12 sm:space-y-16">
@@ -296,7 +303,7 @@ export default function Home() {
 
         <section
           id="research"
-          ref={(el) => (sectionsRef.current[2] = el)}
+          ref={setSectionRef(2)}
           className="min-h-screen py-20 sm:py-32 opacity-0"
         >
           <div className="space-y-12 sm:space-y-16">
@@ -358,7 +365,7 @@ export default function Home() {
 
         <section
           id="thoughts"
-          ref={(el) => (sectionsRef.current[5] = el)}
+          ref={setSectionRef(5)}
           className="min-h-screen py-20 sm:py-32 opacity-0"
         >
           <div className="space-y-12 sm:space-y-16">
@@ -389,7 +396,7 @@ export default function Home() {
           </div>
         </section>
 
-        <section id="connect" ref={(el) => (sectionsRef.current[3] = el)} className="py-20 sm:py-32 opacity-0">
+        <section id="connect" ref={setSectionRef(3)} className="py-20 sm:py-32 opacity-0">
           <div className="grid lg:grid-cols-2 gap-12 sm:gap-16">
             <div className="space-y-6 sm:space-y-8">
               <h2 className="text-3xl sm:text-4xl font-light">Let's Connect</h2>
