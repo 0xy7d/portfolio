@@ -301,7 +301,7 @@ export default function Home() {
           </div>
         </section>
 
-        <section
+        {/* <section
           id="research"
           ref={setSectionRef(2)}
           className="min-h-screen py-20 sm:py-32 opacity-0"
@@ -361,7 +361,7 @@ export default function Home() {
               ))}
             </div>
           </div>
-        </section>
+        </section> */}
 
         <section
           id="thoughts"
