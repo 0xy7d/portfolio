@@ -69,7 +69,7 @@ export default function Home() {
           <div className="grid lg:grid-cols-5 gap-12 sm:gap-16 w-full">
             <div className="lg:col-span-3 space-y-6 sm:space-y-8">
               <div className="space-y-3 sm:space-y-2">
-                <div className="text-sm text-muted-foreground font-mono tracking-wider">PORTFOLIO / 2025</div>
+                <div className="text-sm text-muted-foreground font-mono tracking-wider">PORTFOLIO / 2026</div>
                 <h1 className="text-5xl sm:text-6xl lg:text-7xl font-light tracking-tight">
                   Malik
                   <br />
@@ -79,10 +79,9 @@ export default function Home() {
 
               <div className="space-y-6 max-w-md">
                 <p className="text-lg sm:text-xl text-muted-foreground leading-relaxed">
-                  Focused on building
-                  <span className="text-foreground"> intelligent, scalable solutions</span> that bridge
-                  <span className="text-foreground"> machine learning</span> and
-                  <span className="text-foreground"> real-world applications</span>.
+                  Software engineer exploring
+                  <span className="text-foreground"> embodied intelligence</span> research and
+                  <span className="text-foreground"> Web3</span>.
                 </p>
 
                 <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 text-sm text-muted-foreground">
@@ -99,16 +98,16 @@ export default function Home() {
               <div className="space-y-4">
                 <div className="text-sm text-muted-foreground font-mono">CURRENTLY</div>
                 <div className="space-y-2">
-                  <div className="text-foreground">AI/ML Engineer</div>
-                  <div className="text-muted-foreground">@ CreaCubed USA</div>
-                  <div className="text-xs text-muted-foreground">May 2024 — Present</div>
+                  <div className="text-foreground">Software Engineer</div>
+                  <div className="text-muted-foreground">@ Crescent University</div>
+                  <div className="text-xs text-muted-foreground">Jun 2025 to Present</div>
                 </div>
               </div>
 
               <div className="space-y-4">
                 <div className="text-sm text-muted-foreground font-mono">FOCUS</div>
                 <div className="flex flex-wrap gap-2">
-                  {["Python", "Generative AI", "Next.js", "Go (Basic)", "Rust (Learning)"].map((skill) => (
+                  {["Python", "Generative AI", "Next.js", "Go", "Rust"].map((skill) => (
                     <span
                       key={skill}
                       className="px-3 py-1 text-xs border border-border rounded-full hover:border-muted-foreground/50 transition-colors duration-300"
@@ -130,34 +129,43 @@ export default function Home() {
           <div className="space-y-12 sm:space-y-16">
             <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
               <h2 className="text-3xl sm:text-4xl font-light tracking-tight">Experience</h2>
-              <div className="text-sm text-muted-foreground font-mono tracking-tighter">2018 — PRESENT</div>
+              <div className="text-sm text-muted-foreground font-mono tracking-tighter">2018 to PRESENT</div>
             </div>
 
             <div className="space-y-8 sm:space-y-12">
               {[
                 {
+                  year: "2025",
+                  role: "Software Engineer",
+                  company: "Crescent University",
+                  period: "Jun 2025 to Present",
+                  description:
+                    "University operations platforms for student onboarding, registration, and human resources. Cross-platform peer-to-peer file transfer for low-latency environments.",
+                  tech: ["Workflow Automation", "P2P Systems", "Cross-Platform"],
+                },
+                {
                   year: "2024",
                   role: "AI/ML Engineer",
                   company: "CreaCubed USA",
-                  period: "May 2024 — Present",
+                  period: "May 2024 to Jul 2026",
                   description:
-                    "Spearheaded development of AI-driven solutions and optimized AI trading system architectures. Designed and built comprehensive bot platforms handling full lifecycle from concept to deployment.",
-                  tech: ["Generative AI", "Scalable Systems", "Bot Platforms"],
+                    "Web technologies for digital health systems and medical support agent harnesses. Neuro-symbolic knowledge extraction for refined LLM reasoning, real-time translation and transcription, and research into food classification and nutrient estimation.",
+                  tech: ["Neuro-Symbolic AI", "Digital Health", "Real-Time Systems"],
                 },
                 {
                   year: "2024",
                   role: "Product ML Engineer",
                   company: "HabitatHunt",
-                  period: "Jan 2024 — Jan 2025",
+                  period: "Jan 2024 to Aug 2026",
                   description:
-                    "Led AI-driven lead generation from social media using scraping algorithms and data management. Optimized lead generation with Redis, Next.js, Python, and APIFY.",
+                    "Lead generation for realtors.",
                   tech: ["Python", "Redis", "Next.js", "APIFY"],
                 },
                 {
                   year: "2023",
                   role: "Machine Learning Software Engineer",
                   company: "Pusheat",
-                  period: "Aug 2023 — Nov 2023",
+                  period: "Aug 2023 to Nov 2023",
                   description:
                     "Developed food GPT MVP with RAG interface using Llama and GPT-3.5 for optimal user experience.",
                   tech: ["Langchain", "FastAPI", "Llama", "GPT-3.5"],
@@ -166,7 +174,7 @@ export default function Home() {
                   year: "2022",
                   role: "Full-Stack Software Engineer",
                   company: "Listwise",
-                  period: "Mar 2022 — Nov 2022",
+                  period: "Mar 2022 to Nov 2022",
                   description:
                     "Redesigned website sections for improved UX and focused on AI integration for existing platforms.",
                   tech: ["React.js", "AI Integration", "UX Design"],
@@ -175,7 +183,7 @@ export default function Home() {
                   year: "2021",
                   role: "Software Engineer / ML Intern",
                   company: "Numbers NG",
-                  period: "Feb 2021 — Sep 2021",
+                  period: "Feb 2021 to Sep 2021",
                   description:
                     "Improved frontend-backend API interaction and enhanced AI capabilities with NLTK. Achieved 18% performance increase in Vendor-Client matching service.",
                   tech: ["Python", "Django", "AWS", "NLTK"],
@@ -184,7 +192,7 @@ export default function Home() {
                   year: "2021",
                   role: "Software Engineer",
                   company: "TechieHealth Pharmacy",
-                  period: "Apr 2021 — Aug 2021",
+                  period: "Apr 2021 to Aug 2021",
                   description:
                     "Developed Admin dashboard for pharmacy performance analysis. Optimized product management by 60% and streamlined stock-taking by 35%.",
                   tech: ["Inventory Systems", "Performance Analysis", "Bluetooth Printing"],
@@ -193,7 +201,7 @@ export default function Home() {
                   year: "2020",
                   role: "Full-Stack Developer",
                   company: "MicrobicPro",
-                  period: "Apr 2020 — Jan 2021",
+                  period: "Apr 2020 to Jan 2021",
                   description:
                     "Developed responsive web application using React.js and Node.js. Integrated Twilio for promotional and transactional SMS.",
                   tech: ["React.js", "Node.js", "Twilio", "FTP"],
@@ -202,7 +210,7 @@ export default function Home() {
                   year: "2020",
                   role: "Backend Developer",
                   company: "Push Eat",
-                  period: "Aug 2020 — Dec 2020",
+                  period: "Aug 2020 to Dec 2020",
                   description:
                     "Developed 100+ RESTful API endpoints. Implemented real-time vehicle tracking using AWS SQS, SNS, Redis, and Apache Kafka, reducing development time by 50%.",
                   tech: ["REST APIs", "AWS SQS", "Redis", "Apache Kafka"],
@@ -211,7 +219,7 @@ export default function Home() {
                   year: "2019",
                   role: "Co-Founder & Backend Engineer",
                   company: "Fashy",
-                  period: "Aug 2019 — Feb 2021",
+                  period: "Aug 2019 to Feb 2021",
                   description:
                     "Built RESTful APIs for mobile app supporting dynamic data across multiple countries. Improved business workflows through messaging and notification services.",
                   tech: ["REST APIs", "Node.js", "Messaging Services"],
@@ -220,7 +228,7 @@ export default function Home() {
                   year: "2018",
                   role: "Software Engineer Intern",
                   company: "Petabyte Esports",
-                  period: "May 2018 — Apr 2019",
+                  period: "May 2018 to Apr 2019",
                   description:
                     "Built foundational skills in Python, PHP, and JavaScript while developing customized WordPress website for interior design company.",
                   tech: ["WordPress", "Python", "PHP", "JavaScript"],
@@ -456,7 +464,7 @@ export default function Home() {
         <footer className="py-12 sm:py-16 border-t border-border">
           <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 sm:gap-8">
             <div className="space-y-2">
-              <div className="text-sm text-muted-foreground">© 2025 Malik Diyaolu. All rights reserved.</div>
+              <div className="text-sm text-muted-foreground">© 2026 Malik Diyaolu. All rights reserved.</div>
               <div className="text-xs text-muted-foreground">Built with v0.dev with inspirations from <Link key="source" href="https://v0.app/@felixmacaspac">@felixmacaspac</Link></div>
             </div>
 
