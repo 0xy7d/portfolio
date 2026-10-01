@@ -12,7 +12,7 @@ const shareTechMono = Share_Tech_Mono({
 
 export const metadata: Metadata = {
   title: "0xy7d | Malik Diyaolu",
-  description: "Product ML Engineer based in Lagos, Nigeria.",
+  description: "Software engineer based in Lagos, Nigeria, exploring embodied intelligence research and Web3.",
 }
 
 export default function RootLayout({
