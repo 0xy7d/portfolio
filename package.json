@@ -6,7 +6,8 @@
     "build": "next build",
     "dev": "next dev",
     "lint": "next lint",
-    "preview": "npx serve@latest out"
+    "preview": "npx serve@latest out",
+    "test": "node --experimental-strip-types tests/thoughts.test.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
