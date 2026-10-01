@@ -48,7 +48,7 @@ export function RecentThoughts() {
   }
 
   if (state.status === "error") {
-    return <p role="status" className="text-sm leading-7 text-muted-foreground">Recent writing is available on <a href={thoughtsSite} className="inline-link">my thoughts site</a>.</p>
+    return <p role="status" className="text-sm leading-7 text-muted-foreground">Recent writing is available on <a href={thoughtsSite} target="_blank" rel="noopener noreferrer" className="inline-link">my thoughts site</a>.</p>
   }
 
   if (state.thoughts.length === 0) {
@@ -59,7 +59,7 @@ export function RecentThoughts() {
     <div className="divide-y divide-border">
       {state.thoughts.map((thought) => (
         <article key={thought.url} className="py-6 first:pt-0 last:pb-0">
-          <a href={thought.url} className="group grid items-start gap-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:gap-8">
+          <a href={thought.url} target="_blank" rel="noopener noreferrer" className="group grid items-start gap-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:gap-8">
             <div className="min-w-0 space-y-2">
               <h3 className="text-lg leading-snug transition-colors group-hover:text-muted-foreground sm:text-xl">{thought.title}</h3>
               {thought.category && <p className="eyebrow">{thought.category}</p>}
