@@ -77,8 +77,8 @@ export default function Home() {
               Malik<br /><span className="text-muted-foreground">Diyaolu</span>
             </h1>
             <div className="max-w-xl space-y-4 text-lg leading-relaxed text-muted-foreground sm:text-xl">
-              <p>Software engineer exploring <span className="text-foreground">embodied intelligence</span> research and <span className="text-foreground">Web3</span>.</p>
-              <p>I build and explore ideas at <a href={lab.url} className="inline-link">{lab.name}</a>.</p>
+              <p>Software engineer building useful systems from complex ideas. My next focus is <span className="text-foreground">embodied intelligence</span> research and <span className="text-foreground">Web3</span>: intelligence that acts in the physical world, and software that gives people more ownership.</p>
+              <p>I build and explore ideas at <a href={lab.url} target="_blank" rel="noopener noreferrer" className="inline-link">{lab.name}</a>.</p>
             </div>
             <div className="flex flex-wrap items-center gap-x-6 gap-y-3 text-sm text-muted-foreground">
               <span className="inline-flex items-center gap-2"><span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-emerald-600" />Available for work</span>
@@ -132,7 +132,7 @@ export default function Home() {
         <section id="projects" aria-labelledby="projects-title" className="section-anchor section-space border-t border-border">
           <div className="section-heading">
             <h2 id="projects-title" className="section-title">Selected Projects</h2>
-            <a href={lab.url} className="inline-flex items-center gap-2 text-sm inline-link">{lab.name}<ArrowUpRight aria-hidden="true" className="h-4 w-4" /></a>
+            <a href={lab.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-sm inline-link">{lab.name}<ArrowUpRight aria-hidden="true" className="h-4 w-4" /></a>
           </div>
           <div className="space-y-6">
             {projects.map((project) => (
@@ -142,11 +142,11 @@ export default function Home() {
                   <h3 className="text-2xl font-light">{project.title}</h3>
                 </div>
                 <div className="min-w-0 space-y-5">
-                  <p className="max-w-xl text-base leading-7 text-muted-foreground">{project.description}</p>
-                  <ul aria-label={`${project.title} technologies`} className="flex flex-wrap items-start gap-2">
+                  {project.description && <p className="max-w-xl text-base leading-7 text-muted-foreground">{project.description}</p>}
+                  {project.tech && <ul aria-label={`${project.title} technologies`} className="flex flex-wrap items-start gap-2">
                     {project.tech.map((tech) => <li key={tech} className="tag">{tech}</li>)}
-                  </ul>
-                  <a href={project.url} className="inline-flex items-center gap-2 text-sm inline-link">Explore the lab<ArrowUpRight aria-hidden="true" className="h-4 w-4" /></a>
+                  </ul>}
+                  <a href={project.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-sm inline-link">Explore the lab<ArrowUpRight aria-hidden="true" className="h-4 w-4" /></a>
                 </div>
               </article>
             ))}
@@ -156,7 +156,7 @@ export default function Home() {
         <section id="thoughts" aria-labelledby="thoughts-title" className="section-anchor section-space border-t border-border">
           <div className="section-heading">
             <h2 id="thoughts-title" className="section-title">Recent Thoughts</h2>
-            <a href="https://thoughts.0xy7d.xyz/" className="inline-flex items-center gap-2 text-sm inline-link">All writing<ArrowUpRight aria-hidden="true" className="h-4 w-4" /></a>
+            <a href="https://thoughts.0xy7d.xyz/" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-sm inline-link">All writing<ArrowUpRight aria-hidden="true" className="h-4 w-4" /></a>
           </div>
           <RecentThoughts />
         </section>
@@ -166,7 +166,7 @@ export default function Home() {
             <div className="min-w-0 space-y-6">
               <h2 id="connect-title" className="section-title">Let's Connect</h2>
               <p className="max-w-xl text-lg leading-relaxed text-muted-foreground">Open to research and collaborations in embodied intelligence, Web3, and systems engineering.</p>
-              <a href="mailto:holla@0xy7d.wtf" className="inline-flex items-center gap-2 text-base inline-link">holla@0xy7d.wtf<ArrowUpRight aria-hidden="true" className="h-4 w-4" /></a>
+              <a href="mailto:holla@0xy7d.xyz" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-base inline-link">holla@0xy7d.xyz<ArrowUpRight aria-hidden="true" className="h-4 w-4" /></a>
             </div>
             <div className="space-y-4">
               <p className="eyebrow">Elsewhere</p>
@@ -175,8 +175,7 @@ export default function Home() {
                   { name: "GitHub", url: "https://github.com/0xy7d" },
                   { name: "LinkedIn", url: "https://linkedin.com/in/malikdiyaolu" },
                   { name: "Twitter", url: "https://x.com/0xy7d" },
-                  { name: "Phone", url: "tel:+2348106629712" },
-                ].map((social) => <li key={social.name}><a href={social.url} className="group flex items-center justify-between py-3 text-sm hover:text-muted-foreground">{social.name}<ArrowUpRight aria-hidden="true" className="h-4 w-4" /></a></li>)}
+                ].map((social) => <li key={social.name}><a href={social.url} target="_blank" rel="noopener noreferrer" className="group flex items-center justify-between py-3 text-sm hover:text-muted-foreground">{social.name}<ArrowUpRight aria-hidden="true" className="h-4 w-4" /></a></li>)}
               </ul>
             </div>
           </div>
@@ -185,7 +184,7 @@ export default function Home() {
         <footer className="flex flex-wrap items-center justify-between gap-6 border-t border-border py-8">
           <div className="space-y-2 text-xs leading-relaxed text-muted-foreground">
             <p>© 2026 Malik Diyaolu.</p>
-            <p>Inspired by <a href="https://v0.app/@felixmacaspac" className="inline-link">@felixmacaspac</a></p>
+            <p>Inspired by <a href="https://v0.app/@felixmacaspac" target="_blank" rel="noopener noreferrer" className="inline-link">@felixmacaspac</a></p>
           </div>
           <button onClick={toggleTheme} type="button" aria-label={`Switch to ${isDark ? "light" : "dark"} theme`} className="inline-flex items-center gap-2 rounded-md border border-border px-3 py-2 text-xs hover:bg-muted">
             {isDark ? <Sun aria-hidden="true" className="h-4 w-4" /> : <Moon aria-hidden="true" className="h-4 w-4" />}
