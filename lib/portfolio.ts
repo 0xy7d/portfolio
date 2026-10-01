@@ -104,6 +104,8 @@ export const experience = [
 
 type Project = {
   title: string
+  status?: string
+  headline?: string
   description?: string
   tech?: readonly string[]
   url: string
@@ -118,6 +120,11 @@ export const projects: readonly Project[] = [
   },
   {
     title: "Mira",
+    status: "In preview",
+    headline: "Understanding before answering.",
+    description:
+      "Exploring smaller, more decisive language models through fast context classification and generative reasoning. The first context is Vuu: deciding when to respond, ask for more context, or defer to deeper reasoning. Architecture research is ongoing, with pretraining from scratch under consideration.",
+    tech: ["Context Models", "Decision Models", "Generative Reasoning"],
     url: lab.url,
   },
 ]
