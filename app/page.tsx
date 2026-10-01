@@ -140,8 +140,10 @@ export default function Home() {
                 <div className="space-y-2">
                   <p className="eyebrow">{lab.name}</p>
                   <h3 className="text-2xl font-light">{project.title}</h3>
+                  {project.status && <p className="text-xs text-muted-foreground">{project.status}</p>}
                 </div>
                 <div className="min-w-0 space-y-5">
+                  {project.headline && <p className="text-lg leading-snug">{project.headline}</p>}
                   {project.description && <p className="max-w-xl text-base leading-7 text-muted-foreground">{project.description}</p>}
                   {project.tech && <ul aria-label={`${project.title} technologies`} className="flex flex-wrap items-start gap-2">
                     {project.tech.map((tech) => <li key={tech} className="tag">{tech}</li>)}
