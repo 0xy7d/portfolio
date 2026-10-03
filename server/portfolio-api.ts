@@ -45,6 +45,39 @@ function db(env: Env) {
 function authConfigured(env: Env) {
   return !!(env.PORTFOLIO_DB && env.RESEND_API_KEY && env.APP_SECRET && env.APP_SECRET.length >= 32)
 }
+
+/** Operational checks expose names and readiness only, never credentials or user data. */
+async function runtimeStatus(env: Env) {
+  const tables = ["otp_challenges", "guestbook_sessions", "guestbook_entries", "rate_limits", "music_status"]
+  let database: "ready" | "unbound" | "unavailable" = env.PORTFOLIO_DB ? "unavailable" : "unbound"
+  let missingTables = env.PORTFOLIO_DB ? [] as string[] : tables
+  let receivedMusicUpdate = false
+  if (env.PORTFOLIO_DB) {
+    try {
+      const result = await env.PORTFOLIO_DB.prepare("SELECT name FROM sqlite_master WHERE type = 'table' AND name IN ('otp_challenges', 'guestbook_sessions', 'guestbook_entries', 'rate_limits', 'music_status')").all<{ name: string }>()
+      const present = new Set(result.results.map(row => row.name))
+      missingTables = tables.filter(name => !present.has(name))
+      database = "ready"
+      if (present.has("music_status")) receivedMusicUpdate = !!await env.PORTFOLIO_DB.prepare("SELECT id FROM music_status WHERE id = 1").first()
+    } catch { database = "unavailable" }
+  }
+  const guestbookMissing = [
+    ...(!env.PORTFOLIO_DB ? ["PORTFOLIO_DB"] : []),
+    ...(!env.RESEND_API_KEY ? ["RESEND_API_KEY"] : []),
+    ...(!env.APP_SECRET || env.APP_SECRET.length < 32 ? ["APP_SECRET (at least 32 characters)"] : []),
+    ...missingTables.filter(name => name !== "music_status"),
+  ]
+  const musicMissing = [
+    ...(!env.PORTFOLIO_DB ? ["PORTFOLIO_DB"] : []),
+    ...(!env.MUSIC_WEBHOOK_TOKEN || env.MUSIC_WEBHOOK_TOKEN.length < 32 ? ["MUSIC_WEBHOOK_TOKEN (at least 32 characters)"] : []),
+    ...missingTables.filter(name => name === "music_status"),
+  ]
+  return {
+    database: { status: database, missingTables },
+    guestbook: { configured: database === "ready" && guestbookMissing.length === 0, missing: guestbookMissing },
+    music: { configured: database === "ready" && musicMissing.length === 0, missing: musicMissing, receivedUpdate: receivedMusicUpdate },
+  }
+}
 function sameOrigin(request: Request) {
   if (request.headers.get("Origin") !== new URL(request.url).origin) {
     throw new ApiError(403, "Please use the form on this website.")
@@ -155,12 +188,13 @@ export async function handleApi(request: Request, env: Env, fetcher: typeof fetc
     const url = new URL(request.url)
     const path = url.pathname.replace(/\/$/, "")
     const method = request.method
+    if (path === "/api/status" && method === "GET") return json(await runtimeStatus(env))
     if (path === "/api/music" && method === "GET") {
       const profileUrl = appleUrl(env.APPLE_MUSIC_PROFILE_URL) ?? "https://music.apple.com/profile/0xy7d"
-      if (!env.PORTFOLIO_DB) return json({ track: null, isPlaying: false, profileUrl })
+      if (!env.PORTFOLIO_DB) return json({ track: null, isPlaying: false, profileUrl, available: false })
       const track = await env.PORTFOLIO_DB.prepare("SELECT title, artist, album, url, artwork_url, is_playing, updated_at FROM music_status WHERE id = 1").first<Music>()
       return json({ track: track ? { title: track.title, artist: track.artist, album: track.album, url: track.url, artworkUrl: track.artwork_url, updatedAt: new Date(track.updated_at).toISOString() } : null,
-        isPlaying: !!track && track.is_playing === 1 && now - track.updated_at < 120_000, profileUrl })
+        isPlaying: !!track && track.is_playing === 1 && now - track.updated_at < 120_000, profileUrl, available: true })
     }
     if (path === "/api/music" && method === "POST") {
       if (!env.MUSIC_WEBHOOK_TOKEN || env.MUSIC_WEBHOOK_TOKEN.length < 32) throw new ApiError(503, "Music updates are unavailable.")

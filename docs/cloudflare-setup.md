@@ -82,3 +82,17 @@ npx wrangler d1 execute portfolio --remote --config wrangler.local.jsonc --comma
 ```
 
 Replace `123` with the exact note to remove. Do not interpolate a visitor's text into SQL.
+
+## Diagnose a deployed setup from the dashboard
+
+Open `https://0xy7d.xyz/api/status` after deploying. This endpoint reports configuration readiness, missing table names, and whether a music update has ever arrived. It never returns secrets, email addresses, messages, or token values. `configured: true` means the required settings and tables are present; it does not verify that Resend accepts the API key or that the device Shortcut is running.
+
+- `database.status: "unbound"`: add the `PORTFOLIO_DB` D1 binding to the Pages project's **Production** environment, then redeploy.
+- `database.missingTables` contains names: open the bound database's D1 **Console** and execute the corresponding statements in `migrations/0001_portfolio.sql`. You can execute each semicolon-terminated statement separately. All tables and indexes use `IF NOT EXISTS`.
+- `guestbook.missing` contains `RESEND_API_KEY` or `APP_SECRET`: check these exact names under the Pages project's **Production** Variables and Secrets. `APP_SECRET` must have at least 32 characters. Save and redeploy so the new settings reach the running Functions.
+- `music.missing` contains `MUSIC_WEBHOOK_TOKEN`: check the exact Production secret name and use the same private token in your Shortcut. It must have at least 32 characters.
+- `music.configured: true` and `receivedUpdate: false`: the publishing endpoint is configured but has not received a successful Shortcut update. Play music, run the publishing Shortcut, and inspect its response. Successful publishing returns `{"updated":true}`.
+
+The music card says **No listening updates yet** while waiting for its first device update, or **Listening updates are unavailable** when the API cannot be reached or the database binding is absent. It cannot infer stopped playback from a missing update.
+
+To deploy through dashboards, save the Pages settings before merging the feature/fix PR in GitHub. The repository's GitHub Actions workflow then redeploys the app with Functions. If the code is already merged, rerun the latest deployment workflow from GitHub Actions after saving settings. A dashboard drag-and-drop upload of static files does not include the Functions backend.

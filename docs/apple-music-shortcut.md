@@ -18,7 +18,7 @@ Create a Shortcut named **Publish my music**:
    - `artist`: Text, select the Artist variable.
    - `playing`: **Boolean**, true. Use a Boolean, not the text `true`.
    - Optional `album`: Text, select the Album variable. Omit it if the song has no album.
-6. End the If block. Run the Shortcut while music is actually playing. Shortcuts will ask for permission to contact `0xy7d.xyz` the first time.
+6. Add **Show Result** after Get Contents of URL so you can inspect the response. A successful update returns `{"updated":true}`. Then end the If block. Run the Shortcut while music is actually playing. Shortcuts will ask for permission to contact `0xy7d.xyz` the first time.
 
 Names and artists are enough to update the card. You can optionally add `url` with a song's `https://music.apple.com/...` link, and `artworkUrl` with a URL served by Apple's `*.mzstatic.com` or `images.apple.com` hosts. These must be URL strings, not an image file or a Shortcuts music object. Without a song URL the card opens your personal Apple Music profile; without artwork it displays a music icon.
 

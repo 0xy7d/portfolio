@@ -21,7 +21,7 @@ export function Listening() {
         const status = parseMusic(await response.json())
         if (active) setMusic(status)
       } catch {
-        if (active) setMusic(previous => ({ ...previous, isPlaying: false }))
+        if (active) setMusic(previous => ({ ...previous, isPlaying: false, available: false }))
       } finally {
         clearTimeout(timeout)
         controller = null
@@ -52,7 +52,7 @@ export function Listening() {
             <p className="break-words text-xs text-muted-foreground">{music.track.artist}</p>
           </div>
         </a>
-      ) : <p className="text-sm leading-relaxed text-muted-foreground">{ready ? "Nothing playing right now." : "Checking the record player…"}</p>}
+      ) : <p className="text-sm leading-relaxed text-muted-foreground">{ready ? music.available ? "No listening updates yet." : "Listening updates are unavailable." : "Checking the record player…"}</p>}
       <a href={music.profileUrl} target="_blank" rel="noopener noreferrer" className="inline-link inline-flex items-center gap-1.5 text-xs text-muted-foreground">
         My Apple Music<ArrowUpRight aria-hidden="true" className="h-3.5 w-3.5" />
       </a>
