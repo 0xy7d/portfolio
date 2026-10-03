@@ -3,6 +3,6 @@
 RESEND_API_KEY="replace-with-your-resend-key"
 APP_SECRET="replace-with-a-random-secret-of-at-least-32-characters"
 MUSIC_WEBHOOK_TOKEN="replace-with-a-different-random-secret-of-at-least-32-characters"
-RESEND_FROM="Malik <guestbook@0xy7d.xyz>"
+RESEND_FROM="Maleek <guestbook@0xy7d.xyz>"
 # Paste the share link from your own Apple Music profile. Do not guess a handle.
 APPLE_MUSIC_PROFILE_URL="https://music.apple.com/profile/0xy7d"

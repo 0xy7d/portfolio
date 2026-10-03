@@ -2,9 +2,11 @@ import { DatabaseSync } from 'node:sqlite'
 import { readFileSync } from 'node:fs'
 
 /** SQLite-backed D1 adapter: execute the real migration and SQL, including transactions. */
-export function testDatabase() {
+export function testDatabase({ signatures = true } = {}) {
   const sqlite = new DatabaseSync(':memory:')
+  sqlite.exec('PRAGMA foreign_keys = ON')
   sqlite.exec(readFileSync(new URL('../../migrations/0001_portfolio.sql', import.meta.url), 'utf8'))
+  if (signatures) sqlite.exec(readFileSync(new URL('../../migrations/0002_guestbook_signatures.sql', import.meta.url), 'utf8'))
   function prepare(sql, values = []) {
     const execute = () => {
       const statement = sqlite.prepare(sql)
