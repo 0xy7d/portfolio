@@ -2,6 +2,8 @@
 
 This is a private Shortcut on the device where you listen. Your public Apple Music profile does not provide a live playback feed. The Shortcut calls the portfolio's music endpoint, using the private `MUSIC_WEBHOOK_TOKEN` configured in Cloudflare.
 
+For the native Music app on a MacBook, use [the macOS publisher](apple-music-macos.md). It can inspect the current song without publishing and read actual playing/paused state. The Get Current Song actions below describe the iPhone/iPad route.
+
 ## Publish the current song
 
 Create a Shortcut named **Publish my music**:

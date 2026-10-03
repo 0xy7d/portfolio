@@ -16,7 +16,7 @@ npx wrangler d1 migrations apply portfolio --remote --config wrangler.local.json
 
 ## 2. Configure email and secrets
 
-Verify **0xy7d.xyz** in Resend and add the DNS records that Resend provides. Create an API key allowed to send from the verified domain. The default sender is **Malik <guestbook@0xy7d.xyz>**. This sender does not require a mailbox, but the domain must be verified.
+Verify **0xy7d.xyz** in Resend and add the DNS records that Resend provides. Create an API key allowed to send from the verified domain. The default sender is **Maleek <guestbook@0xy7d.xyz>**. This sender does not require a mailbox, but the domain must be verified.
 
 Set these in **Workers & Pages → portfolio → Settings → Variables and Secrets** for Production:
 
@@ -26,7 +26,7 @@ Set these in **Workers & Pages → portfolio → Settings → Variables and Secr
 | `APP_SECRET` | Secret | A random value with at least 32 characters |
 | `MUSIC_WEBHOOK_TOKEN` | Secret | A different random value with at least 32 characters |
 | `APPLE_MUSIC_PROFILE_URL` | Text, optional | `https://music.apple.com/profile/0xy7d` (also the default) |
-| `RESEND_FROM` | Text, optional | `Malik <guestbook@0xy7d.xyz>` (also the default) |
+| `RESEND_FROM` | Text, optional | `Maleek <guestbook@0xy7d.xyz>` (also the default) |
 
 Generate each secret separately, for example with `openssl rand -hex 32`. Never put these values in source control, a `NEXT_PUBLIC_*` variable, a public Shortcut share link, or a PR. `APP_SECRET` also protects private email/IP identifiers; changing it invalidates outstanding codes and resets their rate-limit identity. Existing sessions expire naturally after seven days.
 
@@ -96,3 +96,22 @@ Open `https://0xy7d.xyz/api/status` after deploying. This endpoint reports confi
 The music card says **No listening updates yet** while waiting for its first device update, or **Listening updates are unavailable** when the API cannot be reached or the database binding is absent. It cannot infer stopped playback from a missing update.
 
 To deploy through dashboards, save the Pages settings before merging the feature/fix PR in GitHub. The repository's GitHub Actions workflow then redeploys the app with Functions. If the code is already merged, rerun the latest deployment workflow from GitHub Actions after saving settings. A dashboard drag-and-drop upload of static files does not include the Functions backend.
+
+## Enable drawn guestbook signatures through the dashboard
+
+Signatures are optional and use a separate table so the existing guestbook continues working before the addition is installed. In **Cloudflare → D1 → portfolio → Console**, execute:
+
+```sql
+CREATE TABLE IF NOT EXISTS guestbook_signatures (
+  entry_id INTEGER PRIMARY KEY REFERENCES guestbook_entries(id) ON DELETE CASCADE,
+  strokes TEXT NOT NULL CHECK(json_valid(strokes) AND length(strokes) <= 24000)
+);
+```
+
+This is the statement in `migrations/0002_guestbook_signatures.sql`. It is safe to run again. After deploying the signature PR, reload the homepage and sign in. The **Add a drawn signature** option appears once the table is present. `/api/guestbook/session` and `/api/status` report `signaturesAvailable: true`.
+
+A signed note and its drawing are saved in one transaction. Existing notes remain intact and can still be posted without drawings. Deleting a note also deletes its drawing through the foreign key. Only bounded numeric strokes are accepted; uploaded SVG and image data are not accepted. Signatures are public alongside the name and note, and signing is optional.
+
+The email display name is **Maleek**. A configured `RESEND_FROM` still supplies the sender address, but its display name is replaced with Maleek, including when an older value contains Malik. For clarity, you can also update the optional Production value to `Maleek <guestbook@0xy7d.xyz>`. Code emails refer to Maleek's guestbook.
+
+For the native Music app on a MacBook, follow [the Mac inspection and publishing guide](apple-music-macos.md). A music response with `available: true` and `track: null` means the read API is available but no accepted track has been stored. It does not prove that the owner token is correct or that a publishing Shortcut has run.

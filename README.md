@@ -30,3 +30,7 @@ The homepage includes Apple Music playback published from a private Apple Shortc
 Follow [the Cloudflare setup guide](docs/cloudflare-setup.md) to create the database, apply its migration, configure secrets, and redeploy. Then follow [the Apple Shortcut guide](docs/apple-music-shortcut.md) to connect your listening device. These services need configuration before the new features work on the live site.
 
 The card links to [my Apple Music profile](https://music.apple.com/profile/0xy7d). It shows Now listening for fresh playback updates and Recently listened when updates stop. The guestbook keeps email private, expires codes after five minutes, and uses secure cookies for verified sessions. Notes are public immediately after verification. The setup guide includes a D1 command for removing an unwanted note.
+
+Guestbook notes can include an optional drawn signature. Apply the small [signature migration](migrations/0002_guestbook_signatures.sql) through the D1 dashboard to enable drawing; ordinary notes continue working before it is applied. The email sender name is Maleek.
+
+For Apple Music in the native Mac app, use the [Mac publisher guide](docs/apple-music-macos.md). Its inspection mode reads the real player state before publishing, and its watcher sends actual pause updates and fresh playing heartbeats.

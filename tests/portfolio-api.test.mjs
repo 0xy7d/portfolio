@@ -37,7 +37,7 @@ function fixture(t) {
 test('Resend OTP establishes a private session; posting, persistence and logout work', async t => {
   const f = fixture(t)
   const cookie = await f.signIn(' Reader@Example.com ')
-  assert.equal(f.emails[0].from, 'Malik <guestbook@0xy7d.xyz>')
+  assert.equal(f.emails[0].from, 'Maleek <guestbook@0xy7d.xyz>')
   assert.deepEqual(f.emails[0].to, ['reader@example.com'])
   assert.equal((await f.request('guestbook/session', undefined, { Cookie: cookie }).then(r => r.json())).authenticated, true)
   const posted = await f.request('guestbook/entries', { name: ' Ada ', message: 'Hello!\n<script>alert(1)</script>' }, { Cookie: cookie })
@@ -45,7 +45,7 @@ test('Resend OTP establishes a private session; posting, persistence and logout 
   assert.equal((await posted.json()).entry.name, 'Ada')
   const publicData = await f.request('guestbook/entries').then(r => r.json())
   assert.equal(publicData.entries[0].message, 'Hello!\n<script>alert(1)</script>')
-  assert.deepEqual(Object.keys(publicData.entries[0]).sort(), ['createdAt', 'id', 'message', 'name'])
+  assert.deepEqual(Object.keys(publicData.entries[0]).sort(), ['createdAt', 'id', 'message', 'name', 'signature'])
   const stored = f.database.sqlite.prepare('SELECT * FROM guestbook_entries').get()
   assert.match(stored.email_key, /^[a-f0-9]{64}$/)
   assert.ok(!JSON.stringify(stored).includes('reader@example.com'))
@@ -109,7 +109,7 @@ test('origin checks, validation, cooldown and per-email limits prevent unsafe po
   assert.equal(repeated.status, 429)
   assert.equal(repeated.headers.get('Retry-After'), '60')
   assert.equal((await f.request('guestbook/entries', { name: 'Ada', message: 'x'.repeat(501) }, { Cookie: cookie })).status, 400)
-  assert.equal((await f.request('guestbook/entries', { name: 'Ada', message: 'a'.repeat(9000) }, { Cookie: cookie })).status, 413)
+  assert.equal((await f.request('guestbook/entries', { name: 'Ada', message: 'a'.repeat(33000) }, { Cookie: cookie })).status, 413)
   assert.equal((await f.request('guestbook/entries', { name: 'Ada', message: 'Hi' }, { Cookie: cookie })).status, 201)
   assert.equal((await f.request('guestbook/entries', { name: 'Ada', message: 'Again' }, { Cookie: cookie })).status, 429)
   f.advance(60_001)
@@ -142,7 +142,7 @@ test('public pagination returns every entry once without disclosing private iden
 
 test('unconfigured features fail gracefully without fake playback or authentication', async () => {
   const request = path => handleApi(new Request(`${origin}/api/${path}`), {})
-  assert.deepEqual(await request('guestbook/session').then(r => r.json()), { authenticated: false, available: false })
+  assert.deepEqual(await request('guestbook/session').then(r => r.json()), { authenticated: false, available: false, signaturesAvailable: false })
   assert.equal((await request('guestbook/entries')).status, 503)
   assert.deepEqual(await request('music').then(r => r.json()), { track: null, isPlaying: false, profileUrl: 'https://music.apple.com/profile/0xy7d', available: false })
 })
@@ -217,4 +217,61 @@ test('music rendering drops invalid data and untrusted links', () => {
   assert.equal(parsed.track.url, null)
   assert.equal(parsed.track.artworkUrl, null)
   assert.equal(parsed.profileUrl, 'https://music.apple.com/profile/0xy7d')
+})
+
+test('Maleek is the sender name even when a previous display name is configured', async t => {
+  const f = fixture(t)
+  f.env.RESEND_FROM = 'Malik <guestbook@0xy7d.xyz>'
+  await f.signIn()
+  assert.equal(f.emails[0].from, 'Maleek <guestbook@0xy7d.xyz>')
+  assert.ok(f.emails[0].text.includes("Maleek's guestbook"))
+})
+
+test('drawn signatures persist with their notes, remain private by email, and survive public reads', async t => {
+  const f = fixture(t)
+  const cookie = await f.signIn()
+  const signature = [[[12.36, 40.18], [80, 120], [150, 60]], [[200, 100]]]
+  const posted = await f.request('guestbook/entries', { name: 'Ada', message: 'Signed with a hello.', signature }, { Cookie: cookie })
+  assert.equal(posted.status, 201)
+  const entry = (await posted.json()).entry
+  assert.deepEqual(entry.signature, [[[12.4, 40.2], [80, 120], [150, 60]], [[200, 100]]])
+  const listed = await f.request('guestbook/entries').then(r => r.json())
+  assert.deepEqual(listed.entries[0].signature, entry.signature)
+  assert.ok(!JSON.stringify(listed).includes('reader@example.com'))
+  assert.ok(!JSON.stringify(listed).includes('email_key'))
+  f.database.sqlite.prepare('DELETE FROM guestbook_entries WHERE id = ?').run(Number(entry.id))
+  assert.equal(f.database.sqlite.prepare('SELECT count(*) AS count FROM guestbook_signatures').get().count, 0)
+})
+
+test('old databases keep serving and accepting ordinary notes until the optional signature migration is applied', async t => {
+  const f = fixture(t)
+  f.database.sqlite.exec('DROP TABLE guestbook_signatures')
+  const cookie = await f.signIn()
+  const state = await f.request('guestbook/session', undefined, { Cookie: cookie }).then(r => r.json())
+  assert.equal(state.available, true)
+  assert.equal(state.signaturesAvailable, false)
+  const signed = await f.request('guestbook/entries', { name: 'Ada', message: 'Hi', signature: [[[10, 10]]] }, { Cookie: cookie })
+  assert.equal(signed.status, 503)
+  assert.equal(f.database.sqlite.prepare('SELECT count(*) AS count FROM guestbook_entries').get().count, 0)
+  const plain = await f.request('guestbook/entries', { name: 'Ada', message: 'Hi' }, { Cookie: cookie })
+  assert.equal(plain.status, 201)
+  assert.equal((await f.request('guestbook/entries').then(r => r.json())).entries[0].signature, null)
+})
+
+test('non-numeric drawings, scripts, out-of-bounds coordinates and excessive points are rejected', async t => {
+  const f = fixture(t)
+  const cookie = await f.signIn()
+  for (const signature of ['<svg onload="alert(1)"/>', [], [[[401, 10]]], [[[10, -1]]], [[[10, '20']]], [Array.from({ length: 1201 }, () => [10, 10])]]) {
+    assert.equal((await f.request('guestbook/entries', { name: 'Ada', message: 'Hi', signature }, { Cookie: cookie })).status, 400)
+  }
+  assert.equal(f.database.sqlite.prepare('SELECT count(*) AS count FROM guestbook_entries').get().count, 0)
+})
+
+test('a failed signature insert rolls back the note rather than posting a partial entry', async t => {
+  const f = fixture(t)
+  const cookie = await f.signIn()
+  f.database.sqlite.exec("CREATE TRIGGER reject_signature BEFORE INSERT ON guestbook_signatures BEGIN SELECT RAISE(ABORT, 'test failure'); END")
+  const posted = await f.request('guestbook/entries', { name: 'Ada', message: 'Hi', signature: [[[10, 10]]] }, { Cookie: cookie })
+  assert.equal(posted.status, 503)
+  assert.equal(f.database.sqlite.prepare('SELECT count(*) AS count FROM guestbook_entries').get().count, 0)
 })

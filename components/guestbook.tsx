@@ -1,8 +1,10 @@
 "use client"
 
 import { useEffect, useRef, useState, type FormEvent } from "react"
+import { SignatureDrawing, SignaturePad } from "@/components/signature"
+import { parseSignature, type Signature } from "@/lib/signature"
 
-type Entry = { id: string; name: string; message: string; createdAt: string }
+type Entry = { id: string; name: string; message: string; createdAt: string; signature?: Signature | null }
 type Entries = { entries: Entry[]; nextCursor: string | null }
 const field = "w-full min-w-0 rounded-md border border-border bg-background px-3 py-2.5 text-sm placeholder:text-muted-foreground disabled:opacity-60"
 const button = "rounded-md border border-border px-4 py-2.5 text-sm hover:bg-muted disabled:cursor-wait disabled:opacity-50"
@@ -28,6 +30,9 @@ export function Guestbook() {
   const [loaded, setLoaded] = useState(false)
   const [available, setAvailable] = useState(false)
   const [authenticated, setAuthenticated] = useState(false)
+  const [signaturesAvailable, setSignaturesAvailable] = useState(false)
+  const [showSignature, setShowSignature] = useState(false)
+  const [signature, setSignature] = useState<Signature | null>(null)
   const [email, setEmail] = useState("")
   const [challenge, setChallenge] = useState<string | null>(null)
   const [code, setCode] = useState("")
@@ -47,12 +52,12 @@ export function Guestbook() {
     const timeout = setTimeout(() => controller.abort(), 10_000)
     void Promise.allSettled([
       api<Entries>("entries", undefined, controller.signal),
-      api<{ authenticated: boolean; available: boolean }>("session", undefined, controller.signal),
+      api<{ authenticated: boolean; available: boolean; signaturesAvailable?: boolean }>("session", undefined, controller.signal),
     ]).then(([list, session]) => {
       if (!active) return
       if (list.status === "fulfilled") { setEntries(list.value.entries); setCursor(list.value.nextCursor) }
       else setError("Messages are unavailable right now. Please try again later.")
-      if (session.status === "fulfilled") { setAuthenticated(session.value.authenticated); setAvailable(session.value.available) }
+      if (session.status === "fulfilled") { setAuthenticated(session.value.authenticated); setAvailable(session.value.available); setSignaturesAvailable(session.value.signaturesAvailable === true) }
       setLoaded(true)
     }).finally(() => clearTimeout(timeout))
     return () => { active = false; clearTimeout(timeout); controller.abort() }
@@ -97,8 +102,8 @@ export function Guestbook() {
   function post(event: FormEvent) {
     event.preventDefault()
     void act("post", async () => {
-      const result = await api<{ entry: Entry }>("entries", { name, message })
-      setEntries(previous => [result.entry, ...previous]); setMessage("")
+      const result = await api<{ entry: Entry }>("entries", { name, message, signature })
+      setEntries(previous => [result.entry, ...previous]); setMessage(""); setSignature(null); setShowSignature(false)
       setNotice("Thanks for stopping by. Your message is here.")
     })
   }
@@ -114,12 +119,16 @@ export function Guestbook() {
             <div className="flex items-center justify-between gap-4 text-xs text-muted-foreground">
               <span>Email verified</span>
               <button type="button" disabled={!!pending} className="inline-link" onClick={() => void act("logout", async () => {
-                await api("logout", {}); setAuthenticated(false); setNotice("You're signed out.")
+                await api("logout", {}); setAuthenticated(false); setSignature(null); setShowSignature(false); setNotice("You're signed out.")
               })}>Sign out</button>
             </div>
             <div className="space-y-2"><label htmlFor="guest-name" className="block text-sm">Name</label><input ref={nameRef} id="guest-name" name="name" autoComplete="name" required maxLength={60} value={name} onChange={event => setName(event.target.value)} className={field} disabled={!!pending} /></div>
             <div className="space-y-2"><label htmlFor="guest-message" className="block text-sm">Your note</label><textarea id="guest-message" name="message" required maxLength={500} rows={4} value={message} onChange={event => setMessage(event.target.value)} className={`${field} resize-y`} disabled={!!pending} /><p className="text-right text-xs text-muted-foreground">{message.length}/500</p></div>
-            <p className="text-xs leading-relaxed text-muted-foreground">Your name and note will be public. Your email stays private.</p>
+            {signaturesAvailable && <div className="space-y-3">
+              <label className="inline-flex items-center gap-2 text-sm"><input type="checkbox" checked={showSignature} disabled={!!pending} onChange={event => { setShowSignature(event.target.checked); if (!event.target.checked) setSignature(null) }} className="h-4 w-4 accent-foreground" />Add a drawn signature</label>
+              {showSignature && <SignaturePad value={signature} onChange={setSignature} disabled={!!pending} />}
+            </div>}
+            <p className="text-xs leading-relaxed text-muted-foreground">Your name, note, and any signature will be public. Your email stays private.</p>
             <button type="submit" disabled={!!pending} className={button}>{pending === "post" ? "Leaving your note…" : "Leave a note"}</button>
           </form>
         ) : challenge ? (
@@ -149,6 +158,7 @@ export function Guestbook() {
           {entries.map(entry => <li key={entry.id} className="space-y-3 py-5 first:pt-0">
             <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1"><p className="min-w-0 max-w-full break-words text-sm">{entry.name}</p><time dateTime={entry.createdAt} className="text-xs text-muted-foreground">{new Date(entry.createdAt).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" })}</time></div>
             <p className="whitespace-pre-wrap break-words text-sm leading-7 text-muted-foreground">{entry.message}</p>
+            {parseSignature(entry.signature) && <SignatureDrawing value={parseSignature(entry.signature)!} name={entry.name} />}
           </li>)}
         </ol>
         {cursor && <button type="button" disabled={!!pending} className={button} onClick={() => void act("more", async () => {

@@ -1,3 +1,5 @@
+import { parseSignature, type Signature } from "../lib/signature.ts"
+
 type Result<T = unknown> = { results: T[]; meta: { changes: number } }
 type Statement = {
   bind(...values: unknown[]): Statement
@@ -45,6 +47,14 @@ function db(env: Env) {
 function authConfigured(env: Env) {
   return !!(env.PORTFOLIO_DB && env.RESEND_API_KEY && env.APP_SECRET && env.APP_SECRET.length >= 32)
 }
+async function signaturesAvailable(database: Database) {
+  return !!await database.prepare("SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'guestbook_signatures'").first()
+}
+function resendSender(env: Env) {
+  const configured = env.RESEND_FROM?.trim() || "guestbook@0xy7d.xyz"
+  const address = configured.match(/<([^<>\r\n]+)>$/)?.[1]?.trim() ?? configured
+  return `Maleek <${address}>`
+}
 
 /** Operational checks expose names and readiness only, never credentials or user data. */
 async function runtimeStatus(env: Env) {
@@ -74,7 +84,8 @@ async function runtimeStatus(env: Env) {
   ]
   return {
     database: { status: database, missingTables },
-    guestbook: { configured: database === "ready" && guestbookMissing.length === 0, missing: guestbookMissing },
+    guestbook: { configured: database === "ready" && guestbookMissing.length === 0, missing: guestbookMissing,
+      signaturesAvailable: database === "ready" && env.PORTFOLIO_DB ? await signaturesAvailable(env.PORTFOLIO_DB) : false },
     music: { configured: database === "ready" && musicMissing.length === 0, missing: musicMissing, receivedUpdate: receivedMusicUpdate },
   }
 }
@@ -83,7 +94,7 @@ function sameOrigin(request: Request) {
     throw new ApiError(403, "Please use the form on this website.")
   }
 }
-async function body(request: Request): Promise<Record<string, unknown>> {
+async function body(request: Request, limit = 8192): Promise<Record<string, unknown>> {
   if (!request.headers.get("Content-Type")?.startsWith("application/json")) throw new ApiError(415, "Please send a valid form.")
   const reader = request.body?.getReader()
   if (!reader) throw new ApiError(400, "Please complete the form.")
@@ -93,7 +104,7 @@ async function body(request: Request): Promise<Record<string, unknown>> {
     const { value, done } = await reader.read()
     if (done) break
     size += value.byteLength
-    if (size > 8192) { await reader.cancel(); throw new ApiError(413, "This message is too long.") }
+    if (size > limit) { await reader.cancel(); throw new ApiError(413, "This message is too long.") }
     chunks.push(value)
   }
   const bytes = new Uint8Array(size)
@@ -219,14 +230,23 @@ export async function handleApi(request: Request, env: Env, fetcher: typeof fetc
       return json({ updated: true })
     }
     if (path === "/api/guestbook/session" && method === "GET") {
-      if (!env.PORTFOLIO_DB) return json({ authenticated: false, available: false })
-      return json({ authenticated: !!await session(request, env, now), available: authConfigured(env) })
+      if (!env.PORTFOLIO_DB) return json({ authenticated: false, available: false, signaturesAvailable: false })
+      return json({ authenticated: !!await session(request, env, now), available: authConfigured(env), signaturesAvailable: await signaturesAvailable(env.PORTFOLIO_DB) })
     }
     if (path === "/api/guestbook/entries" && method === "GET") {
       const cursor = url.searchParams.get("before")
       if (cursor !== null && !/^[1-9][0-9]{0,14}$/.test(cursor)) throw new ApiError(400, "Invalid page.")
-      const result = await db(env).prepare("SELECT id, name, message, created_at FROM guestbook_entries WHERE id < ? ORDER BY id DESC LIMIT 21").bind(cursor ? Number(cursor) : Number.MAX_SAFE_INTEGER).all<{ id: number; name: string; message: string; created_at: number }>()
-      const entries = result.results.slice(0, 20).map(item => ({ id: String(item.id), name: item.name, message: item.message, createdAt: new Date(item.created_at).toISOString() }))
+      const database = db(env)
+      const result = await database.prepare("SELECT id, name, message, created_at FROM guestbook_entries WHERE id < ? ORDER BY id DESC LIMIT 21").bind(cursor ? Number(cursor) : Number.MAX_SAFE_INTEGER).all<{ id: number; name: string; message: string; created_at: number }>()
+      const page = result.results.slice(0, 20)
+      const signatures = new Map<number, Signature>()
+      if (page.length && await signaturesAvailable(database)) {
+        const rows = await database.prepare(`SELECT entry_id, strokes FROM guestbook_signatures WHERE entry_id IN (${page.map(() => "?").join(",")})`).bind(...page.map(item => item.id)).all<{ entry_id: number; strokes: string }>()
+        for (const row of rows.results) {
+          try { const signature = parseSignature(JSON.parse(row.strokes)); if (signature) signatures.set(row.entry_id, signature) } catch { /* Omit invalid stored drawings. */ }
+        }
+      }
+      const entries = page.map(item => ({ id: String(item.id), name: item.name, message: item.message, createdAt: new Date(item.created_at).toISOString(), signature: signatures.get(item.id) ?? null }))
       return json({ entries, nextCursor: result.results.length > 20 ? entries[entries.length - 1].id : null })
     }
     if (path.startsWith("/api/guestbook/") && method === "POST") {
@@ -254,7 +274,7 @@ export async function handleApi(request: Request, env: Env, fetcher: typeof fetc
         try {
           const response = await fetcher("https://api.resend.com/emails", {
             method: "POST", headers: { "Authorization": `Bearer ${env.RESEND_API_KEY}`, "Content-Type": "application/json", "Idempotency-Key": `guestbook-${id}` },
-            body: JSON.stringify({ from: env.RESEND_FROM ?? "Malik <guestbook@0xy7d.xyz>", to: [email], subject: "Your guestbook sign-in code", text: `Your code for Malik's guestbook is ${code}.\n\nIt expires in 5 minutes. If you didn't request this code, you can ignore this email.` }),
+            body: JSON.stringify({ from: resendSender(env), to: [email], subject: "Your guestbook sign-in code", text: `Your code for Maleek's guestbook is ${code}.\n\nIt expires in 5 minutes. If you didn't request this code, you can ignore this email.` }),
             signal: AbortSignal.timeout(10_000),
           })
           delivered = response.ok
@@ -289,13 +309,19 @@ export async function handleApi(request: Request, env: Env, fetcher: typeof fetc
       if (path === "/api/guestbook/entries") {
         const signedIn = await session(request, env, now)
         if (!signedIn) throw new ApiError(401, "Verify your email before leaving a message.")
-        const input = await body(request)
+        const input = await body(request, 32768)
         const name = text(input.name, 60, "Name"), message = text(input.message, 500, "Message")
+        const signature = input.signature == null ? null : parseSignature(input.signature)
+        if (input.signature != null && !signature) throw new ApiError(400, "Please clear your signature and draw it again.")
+        if (signature && !await signaturesAvailable(database)) throw new ApiError(503, "Signatures are unavailable for a moment. You can still leave a note without one.")
         await rate(database, `post-ip:${ip}`, 20, hour, now)
         await rate(database, `post-email:${signedIn.email_key}`, 10, 24 * hour, now)
         await cooldown(database, `post-cooldown:${signedIn.email_key}`, minute, now)
-        const row = await database.prepare("INSERT INTO guestbook_entries (email_key, name, message, created_at) VALUES (?, ?, ?, ?) RETURNING id").bind(signedIn.email_key, name, message, now).first<{ id: number }>()
-        return json({ entry: { id: String(row!.id), name, message, createdAt: new Date(now).toISOString() } }, 201)
+        const insert = database.prepare("INSERT INTO guestbook_entries (email_key, name, message, created_at) VALUES (?, ?, ?, ?) RETURNING id").bind(signedIn.email_key, name, message, now)
+        const row = signature
+          ? (await database.batch([insert, database.prepare("INSERT INTO guestbook_signatures (entry_id, strokes) VALUES (last_insert_rowid(), ?)").bind(JSON.stringify(signature))]))[0].results[0] as { id: number }
+          : await insert.first<{ id: number }>()
+        return json({ entry: { id: String(row!.id), name, message, createdAt: new Date(now).toISOString(), signature } }, 201)
       }
     }
     return json({ error: "Not found." }, 404)
