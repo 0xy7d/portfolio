@@ -32,6 +32,11 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
+      - name: Check types and API behavior
+        run: |
+          pnpm typecheck
+          pnpm test
+
       - name: Build (static export)
         run: pnpm build
 

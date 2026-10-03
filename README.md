@@ -21,4 +21,12 @@ Recent Thoughts fetches `https://thoughts.0xy7d.xyz/feed.json` in the browser. T
 
 Deploy the blog's feed change before deploying the portfolio integration. The feed needs the CORS header in the blog's `public/_headers` to allow access from Cloudflare Pages, previews, and local development. When the feed cannot load, the portfolio offers a link to the writing site instead.
 
-The main branch's GitHub Actions workflow builds and deploys the static `out` directory to Cloudflare Pages.
+The main branch's GitHub Actions workflow checks types, runs tests, builds the static `out` directory, and deploys it together with Pages Functions.
+
+## Listening and guestbook
+
+The homepage includes Apple Music playback published from a private Apple Shortcut, and a guestbook signed with email codes through Resend. Pages Functions and a D1 database provide the backend while the website remains a static export.
+
+Follow [the Cloudflare setup guide](docs/cloudflare-setup.md) to create the database, apply its migration, configure secrets, and redeploy. Then follow [the Apple Shortcut guide](docs/apple-music-shortcut.md) to connect your listening device. These services need configuration before the new features work on the live site.
+
+The card links to [my Apple Music profile](https://music.apple.com/profile/0xy7d). It shows Now listening for fresh playback updates and Recently listened when updates stop. The guestbook keeps email private, expires codes after five minutes, and uses secure cookies for verified sessions. Notes are public immediately after verification. The setup guide includes a D1 command for removing an unwanted note.
