@@ -4,12 +4,15 @@ import Link from "next/link"
 import { ArrowDown, ArrowUpRight, Moon, Sun } from "lucide-react"
 import { useEffect, useState } from "react"
 import { RecentThoughts } from "@/components/recent-thoughts"
+import { Listening } from "@/components/listening"
+import { Guestbook } from "@/components/guestbook"
 import { experience, lab, projects } from "@/lib/portfolio"
 
 const sections = [
   { id: "work", label: "Experience" },
   { id: "projects", label: "Projects" },
   { id: "thoughts", label: "Thoughts" },
+  { id: "guestbook", label: "Guestbook" },
   { id: "connect", label: "Connect" },
 ]
 
@@ -86,7 +89,7 @@ export default function Home() {
             </div>
             <a href="#projects" className="inline-flex items-center gap-2 text-sm inline-link">Explore my work<ArrowDown aria-hidden="true" className="h-4 w-4" /></a>
           </div>
-          <aside aria-label="Current role and tools" className="min-w-0 space-y-8 border-t border-border pt-8 lg:border-t-0 lg:border-l lg:pl-8 lg:pt-0">
+          <aside aria-label="Current role, tools and music" className="min-w-0 space-y-8 border-t border-border pt-8 lg:border-t-0 lg:border-l lg:pl-8 lg:pt-0">
             <div className="space-y-3">
               <p className="eyebrow">Currently</p>
               <div className="space-y-1 text-sm leading-relaxed">
@@ -101,6 +104,7 @@ export default function Home() {
                 {["Python", "Generative AI", "Next.js", "Go", "Rust"].map((skill) => <span key={skill} className="tag">{skill}</span>)}
               </div>
             </div>
+            <Listening />
           </aside>
         </header>
 
@@ -161,6 +165,14 @@ export default function Home() {
             <a href="https://thoughts.0xy7d.xyz/" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-sm inline-link">All writing<ArrowUpRight aria-hidden="true" className="h-4 w-4" /></a>
           </div>
           <RecentThoughts />
+        </section>
+
+        <section id="guestbook" aria-labelledby="guestbook-title" className="section-anchor section-space border-t border-border">
+          <div className="section-heading">
+            <h2 id="guestbook-title" className="section-title">Guestbook</h2>
+            <p className="eyebrow">You were here</p>
+          </div>
+          <Guestbook />
         </section>
 
         <section id="connect" aria-labelledby="connect-title" className="section-anchor section-space border-t border-border">
