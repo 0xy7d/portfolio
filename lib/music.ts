@@ -2,9 +2,10 @@ export type MusicStatus = {
   track: { title: string; artist: string; album: string | null; url: string | null; artworkUrl: string | null; updatedAt: string } | null
   isPlaying: boolean
   profileUrl: string
+  available: boolean
 }
 
-export const emptyMusic: MusicStatus = { track: null, isPlaying: false, profileUrl: "https://music.apple.com/profile/0xy7d" }
+export const emptyMusic: MusicStatus = { track: null, isPlaying: false, profileUrl: "https://music.apple.com/profile/0xy7d", available: false }
 
 function appleLink(value: unknown, artwork = false): string | null {
   if (typeof value !== "string") return null
@@ -18,7 +19,7 @@ function appleLink(value: unknown, artwork = false): string | null {
 export function parseMusic(value: unknown): MusicStatus {
   if (!value || typeof value !== "object") return emptyMusic
   const input = value as Record<string, unknown>
-  const status: MusicStatus = { track: null, isPlaying: false, profileUrl: appleLink(input.profileUrl) ?? emptyMusic.profileUrl }
+  const status: MusicStatus = { track: null, isPlaying: false, profileUrl: appleLink(input.profileUrl) ?? emptyMusic.profileUrl, available: input.available === true }
   if (!input.track || typeof input.track !== "object") return status
   const track = input.track as Record<string, unknown>
   if (typeof track.title !== "string" || !track.title.trim() || typeof track.artist !== "string" || !track.artist.trim() || typeof track.updatedAt !== "string" || !Number.isFinite(Date.parse(track.updatedAt))) return status

@@ -144,7 +144,50 @@ test('unconfigured features fail gracefully without fake playback or authenticat
   const request = path => handleApi(new Request(`${origin}/api/${path}`), {})
   assert.deepEqual(await request('guestbook/session').then(r => r.json()), { authenticated: false, available: false })
   assert.equal((await request('guestbook/entries')).status, 503)
-  assert.deepEqual(await request('music').then(r => r.json()), { track: null, isPlaying: false, profileUrl: 'https://music.apple.com/profile/0xy7d' })
+  assert.deepEqual(await request('music').then(r => r.json()), { track: null, isPlaying: false, profileUrl: 'https://music.apple.com/profile/0xy7d', available: false })
+})
+
+test('runtime status distinguishes a usable database from missing sign-in credentials without exposing values', async t => {
+  const f = fixture(t)
+  delete f.env.RESEND_API_KEY
+  f.env.APP_SECRET = 'short'
+  const status = await f.request('status').then(r => r.json())
+  assert.equal(status.database.status, 'ready')
+  assert.deepEqual(status.database.missingTables, [])
+  assert.equal(status.guestbook.configured, false)
+  assert.ok(status.guestbook.missing.includes('RESEND_API_KEY'))
+  assert.ok(status.guestbook.missing.includes('APP_SECRET (at least 32 characters)'))
+  assert.equal(status.music.configured, true)
+  assert.equal(status.music.receivedUpdate, false)
+  assert.ok(!JSON.stringify(status).includes(f.env.MUSIC_WEBHOOK_TOKEN))
+  assert.ok(!JSON.stringify(status).includes('short'))
+  const music = await f.request('music').then(r => r.json())
+  assert.equal(music.available, true)
+  assert.equal(music.track, null)
+})
+
+test('runtime status reports unapplied tables and recognises a successful device update', async t => {
+  const f = fixture(t)
+  f.database.sqlite.exec('DROP TABLE otp_challenges')
+  let status = await f.request('status').then(r => r.json())
+  assert.deepEqual(status.database.missingTables, ['otp_challenges'])
+  assert.equal(status.guestbook.configured, false)
+  assert.equal(status.music.configured, true)
+  await f.request('music', { title: 'A song', artist: 'An artist', playing: true }, { Authorization: `Bearer ${f.env.MUSIC_WEBHOOK_TOKEN}` })
+  status = await f.request('status').then(r => r.json())
+  assert.equal(status.music.receivedUpdate, true)
+})
+
+test('runtime status recognises an absent or failing database without leaking exception details', async () => {
+  const request = env => handleApi(new Request(`${origin}/api/status`), env)
+  const absent = await request({}).then(r => r.json())
+  assert.equal(absent.database.status, 'unbound')
+  assert.ok(absent.guestbook.missing.includes('PORTFOLIO_DB'))
+  const failing = await request({ PORTFOLIO_DB: { prepare() { throw new Error('private backend detail') } } }).then(r => r.json())
+  assert.equal(failing.database.status, 'unavailable')
+  assert.deepEqual(failing.database.missingTables, [])
+  assert.equal(failing.guestbook.configured, false)
+  assert.ok(!JSON.stringify(failing).includes('private backend detail'))
 })
 
 test('Apple Shortcut updates require the owner token and Apple URLs; fresh, stale and paused playback are distinct', async t => {
