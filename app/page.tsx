@@ -80,7 +80,7 @@ export default function Home() {
               Malik<br /><span className="text-muted-foreground">Diyaolu</span>
             </h1>
             <div className="max-w-xl space-y-4 text-lg leading-relaxed text-muted-foreground sm:text-xl">
-              <p>Software engineer building useful systems from complex ideas. My next focus is <span className="text-foreground">embodied intelligence</span> research and <span className="text-foreground">Web3</span>: intelligence that acts in the physical world, and software that gives people more ownership.</p>
+              <p>Software engineer building useful systems from complex ideas. My research interests span <span className="text-foreground">embodied intelligence</span>, <span className="text-foreground">cybersecurity</span>, and <span className="text-foreground">Web3</span>.</p>
               <p>I build and explore ideas at <a href={lab.url} target="_blank" rel="noopener noreferrer" className="inline-link">{lab.name}</a>.</p>
             </div>
             <div className="flex flex-wrap items-center gap-x-6 gap-y-3 text-sm text-muted-foreground">
