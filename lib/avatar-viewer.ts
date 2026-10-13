@@ -1,9 +1,9 @@
 import * as THREE from "three"
 import { createAvatarModel, disposeAvatarModel } from "./avatar-model"
 
-const initialYaw = 0.14
+const initialYaw = 0.2
 const initialPitch = 0.01
-const initialRoll = 0.09
+const initialRoll = 0.06
 
 export function mountAvatar(canvas: HTMLCanvasElement, onContextLost: () => void) {
   const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true, powerPreference: "low-power" })
@@ -17,12 +17,12 @@ export function mountAvatar(canvas: HTMLCanvasElement, onContextLost: () => void
   const model = createAvatarModel()
   model.rotation.set(initialPitch, initialYaw, initialRoll)
   scene.add(model)
-  scene.add(new THREE.HemisphereLight("#fff8f0", "#92817a", 2.6))
-  const key = new THREE.DirectionalLight("#fff8ef", 2.2)
-  key.position.set(-3, 5, 7)
+  scene.add(new THREE.HemisphereLight("#ece8e0", "#aaa6a4", 1.8))
+  const key = new THREE.DirectionalLight("#fffaff", 2.5)
+  key.position.set(-3, 5, 8)
   scene.add(key)
-  const fill = new THREE.DirectionalLight("#e1deef", 1.2)
-  fill.position.set(4, 1, 4)
+  const fill = new THREE.DirectionalLight("#ffffff", 1.5)
+  fill.position.set(1, 0, 8)
   scene.add(fill)
   const rim = new THREE.DirectionalLight("#d9ccff", 1)
   rim.position.set(2, 3, -4)
