@@ -74,7 +74,7 @@ export default function Home() {
       </div>
 
       <main id="main" tabIndex={-1} className="page-width">
-        <header id="intro" className="section-anchor grid gap-12 py-20 sm:py-28 lg:grid-cols-[minmax(0,1fr)_17rem] lg:gap-16 lg:py-32">
+        <header id="intro" className="section-anchor grid gap-12 pt-10 pb-20 sm:pt-14 sm:pb-28 lg:grid-cols-[minmax(0,1fr)_17rem] lg:gap-16 lg:py-32">
           <div className="min-w-0 space-y-8">
             <p className="eyebrow">Portfolio / 2026</p>
             <h1 className="text-5xl font-light leading-[1.05] tracking-tight sm:text-6xl lg:text-7xl">
@@ -90,24 +90,26 @@ export default function Home() {
             </div>
             <a href="#projects" className="inline-flex items-center gap-2 text-sm inline-link">Explore my work<ArrowDown aria-hidden="true" className="h-4 w-4" /></a>
           </div>
-          <aside aria-label="Avatar, current role, tools and music" className="min-w-0 space-y-8 border-t border-border pt-8 lg:border-t-0 lg:border-l lg:pl-8 lg:pt-0">
-            <Avatar />
-            <div className="space-y-3">
-              <p className="eyebrow">Currently</p>
-              <div className="space-y-1 text-sm leading-relaxed">
-                <p>Software Engineer</p>
-                <p className="text-muted-foreground">Crescent University</p>
-                <p className="text-xs text-muted-foreground">Jun 2025 to Present</p>
+          <div className="contents lg:block lg:min-w-0 lg:space-y-8 lg:border-l lg:border-border lg:pl-8">
+            <div className="order-first lg:order-none"><Avatar /></div>
+            <aside aria-label="Current role, tools and music" className="min-w-0 space-y-8 border-t border-border pt-8 lg:border-t-0 lg:pt-0">
+              <div className="space-y-3">
+                <p className="eyebrow">Currently</p>
+                <div className="space-y-1 text-sm leading-relaxed">
+                  <p>Software Engineer</p>
+                  <p className="text-muted-foreground">Crescent University</p>
+                  <p className="text-xs text-muted-foreground">Jun 2025 to Present</p>
+                </div>
               </div>
-            </div>
-            <div className="space-y-3">
-              <p className="eyebrow">Tools</p>
-              <div className="flex flex-wrap gap-2">
-                {["Python", "Generative AI", "Next.js", "Go", "Rust"].map((skill) => <span key={skill} className="tag">{skill}</span>)}
+              <div className="space-y-3">
+                <p className="eyebrow">Tools</p>
+                <div className="flex flex-wrap gap-2">
+                  {["Python", "Generative AI", "Next.js", "Go", "Rust"].map((skill) => <span key={skill} className="tag">{skill}</span>)}
+                </div>
               </div>
-            </div>
-            <Listening />
-          </aside>
+              <Listening />
+            </aside>
+          </div>
         </header>
 
         <section id="work" aria-labelledby="work-title" className="section-anchor section-space border-t border-border">
