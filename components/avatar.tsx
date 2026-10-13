@@ -92,7 +92,7 @@ export function Avatar() {
           className={`absolute inset-0 h-full w-full touch-pan-y rounded-full outline-offset-4 ${ready ? "visible" : "invisible"} ${dragging ? "cursor-grabbing" : "cursor-grab"}`} />
       </div>
       <div className="mt-2 flex min-h-8 items-center justify-center gap-3 text-xs text-muted-foreground">
-        <p id="avatar-instructions">{ready && !failed ? "Drag to look around" : "Hello, I'm Maleek."}<span className="sr-only">. Use arrow keys to rotate and Home to reset.</span></p>
+        <p id="avatar-instructions">{ready && !failed ? <><span className="avatar-mouse-hint">I'll follow your cursor</span><span className="avatar-touch-hint">Drag to look around</span></> : "Hello, I'm Maleek."}<span className="sr-only">. Use arrow keys to rotate and Home to reset. Automatic movement is disabled when reduced motion is enabled.</span></p>
         {ready && <button type="button" onClick={() => viewer.current?.reset()} aria-label="Reset avatar rotation"
           className="inline-flex h-8 w-8 items-center justify-center rounded-full transition-colors hover:bg-muted hover:text-foreground">
           <RotateCcw aria-hidden="true" className="h-3.5 w-3.5" />
