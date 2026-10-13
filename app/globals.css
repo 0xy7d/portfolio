@@ -162,6 +162,18 @@ html {
   outline-offset: 4px;
 }
 
+.avatar-halo {
+  position: absolute;
+  inset: 12% -2% 1%;
+  border-radius: 50%;
+  background: radial-gradient(circle at 38% 24%, #b49bd5, #8264b0 68%, #6d519a);
+  opacity: 0.2;
+}
+
+.dark .avatar-halo {
+  opacity: 0.42;
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;

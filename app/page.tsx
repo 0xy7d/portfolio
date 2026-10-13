@@ -6,6 +6,7 @@ import { useEffect, useState } from "react"
 import { RecentThoughts } from "@/components/recent-thoughts"
 import { Listening } from "@/components/listening"
 import { Guestbook } from "@/components/guestbook"
+import { Avatar } from "@/components/avatar"
 import { experience, lab, projects } from "@/lib/portfolio"
 
 const sections = [
@@ -89,7 +90,8 @@ export default function Home() {
             </div>
             <a href="#projects" className="inline-flex items-center gap-2 text-sm inline-link">Explore my work<ArrowDown aria-hidden="true" className="h-4 w-4" /></a>
           </div>
-          <aside aria-label="Current role, tools and music" className="min-w-0 space-y-8 border-t border-border pt-8 lg:border-t-0 lg:border-l lg:pl-8 lg:pt-0">
+          <aside aria-label="Avatar, current role, tools and music" className="min-w-0 space-y-8 border-t border-border pt-8 lg:border-t-0 lg:border-l lg:pl-8 lg:pt-0">
+            <Avatar />
             <div className="space-y-3">
               <p className="eyebrow">Currently</p>
               <div className="space-y-1 text-sm leading-relaxed">
