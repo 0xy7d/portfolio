@@ -92,7 +92,7 @@ export function createAvatarModel() {
   const hair = new THREE.MeshStandardMaterial({ color: "#aaaba6", roughness: 0.6 })
   const hairShade = new THREE.MeshStandardMaterial({ color: "#a8aaa4", roughness: 0.68 })
   const eyeMaterial = new THREE.MeshBasicMaterial({ map: createEyeTexture(), toneMapped: false })
-  const lips = new THREE.MeshStandardMaterial({ color: "#4d352e", roughness: 0.78 })
+  const lips = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.75 })
   const mouth = new THREE.MeshStandardMaterial({ color: "#301b15", roughness: 0.85 })
   const sphere = new THREE.SphereGeometry(1, 48, 32)
 
@@ -218,10 +218,43 @@ export function createAvatarModel() {
   ellipsoid(head, skin, [0, -0.35, 0.635], [0.18, 0.145, 0.145])
 
   const smile = new THREE.Group()
-  smile.position.set(0.12, -0.64, 0.561)
-  smile.rotation.z = 0.26
-  ellipsoid(smile, lips, [0, -0.014, -0.018], [0.205, 0.045, 0.038])
-  stroke(smile, mouth, [[-0.2, -0.012, 0.007], [-0.06, 0.011, 0.02], [0.07, 0.017, 0.022], [0.2, 0.022, 0.004]], 0.004)
+  smile.position.set(0.12, -0.64, 0.559)
+  smile.rotation.z = 0.16
+  // Sculpt both lips as tapered ribbons. Their outer edges blend into the
+  // surrounding skin instead of leaving an outlined oval on the face.
+  for (const upper of [true, false]) {
+    const vertices: number[] = []
+    const colors: number[] = []
+    const triangles: number[] = []
+    const lipColor = new THREE.Color(upper ? "#49352e" : "#574039")
+    const skinColor = new THREE.Color("#514139")
+    for (let i = 0; i <= 48; i++) {
+      const t = i / 48
+      const x = (t - 0.5) * 0.43
+      const taper = Math.sin(Math.PI * t)
+      const seam = 0.019 * t + 0.009 * taper
+      const height = (upper ? 0.025 : -0.065) * Math.pow(taper, 0.8)
+      for (let j = 0; j <= 12; j++) {
+        const v = j / 12
+        const depth = taper * (0.015 * (1 - v) + (upper ? 0.018 : 0.034) * Math.sin(Math.PI * v)) - 0.015 * v * v
+        vertices.push(x, seam + height * v, depth - 0.12 * x * x)
+        const color = lipColor.clone().lerp(skinColor, v * v)
+        colors.push(color.r, color.g, color.b)
+        if (i < 48 && j < 12) {
+          const a = i * 13 + j, b = a + 13
+          if (upper) triangles.push(a, b, a + 1, b, b + 1, a + 1)
+          else triangles.push(a, a + 1, b, b, a + 1, b + 1)
+        }
+      }
+    }
+    const geometry = new THREE.BufferGeometry()
+    geometry.setAttribute("position", new THREE.Float32BufferAttribute(vertices, 3))
+    geometry.setAttribute("color", new THREE.Float32BufferAttribute(colors, 3))
+    geometry.setIndex(triangles)
+    geometry.computeVertexNormals()
+    smile.add(new THREE.Mesh(geometry, lips))
+  }
+  stroke(smile, mouth, [[-0.21, 0, 0], [-0.1, 0.011, 0.013], [0, 0.019, 0.017], [0.1, 0.022, 0.013], [0.21, 0.019, 0]], 0.0025)
   head.add(smile)
 
   // Side-swept silver hair wraps the scalp; overlapping lobes form the bun.

@@ -30,10 +30,28 @@ export function mountAvatar(canvas: HTMLCanvasElement, onContextLost: () => void
   let disposed = false
   let visible = true
   let frame = 0
+  let targetYaw = initialYaw
+  let targetPitch = initialPitch
+  let lastFrame = 0
+  let pointer: { x: number; y: number } | null = null
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)")
 
-  function draw() {
+  function draw(time: number) {
     frame = 0
-    if (!disposed && visible && !document.hidden) renderer.render(scene, camera)
+    if (disposed || !visible || document.hidden) { lastFrame = 0; return }
+    const delta = lastFrame ? Math.min((time - lastFrame) / 1000, 0.05) : 1 / 60
+    lastFrame = time
+    const blend = reducedMotion.matches ? 1 : 1 - Math.exp(-12 * delta)
+    model.rotation.y += (targetYaw - model.rotation.y) * blend
+    model.rotation.x += (targetPitch - model.rotation.x) * blend
+    const moving = Math.abs(targetYaw - model.rotation.y) + Math.abs(targetPitch - model.rotation.x) > 0.001
+    if (!moving) {
+      model.rotation.y = targetYaw
+      model.rotation.x = targetPitch
+      lastFrame = 0
+    }
+    renderer.render(scene, camera)
+    if (moving) requestDraw()
   }
   function requestDraw() {
     if (!disposed && !frame) frame = requestAnimationFrame(draw)
@@ -48,26 +66,57 @@ export function mountAvatar(canvas: HTMLCanvasElement, onContextLost: () => void
     renderer.setSize(width, height, false)
     requestDraw()
   }
+  function followPointer() {
+    if (!pointer || reducedMotion.matches || !visible || document.hidden || disposed) return
+    const bounds = canvas.getBoundingClientRect()
+    const yaw = THREE.MathUtils.clamp(Math.atan2(pointer.x - bounds.left - bounds.width / 2, bounds.width * 1.2), -0.7, 0.7)
+    targetYaw = model.rotation.y + THREE.MathUtils.euclideanModulo(yaw - model.rotation.y + Math.PI, Math.PI * 2) - Math.PI
+    targetPitch = THREE.MathUtils.clamp(Math.atan2(pointer.y - bounds.top - bounds.height / 2, bounds.height * 1.4), -0.32, 0.32)
+    requestDraw()
+  }
+  const onPointer = (event: PointerEvent) => {
+    if (event.pointerType !== "mouse" || event.buttons) return
+    pointer = { x: event.clientX, y: event.clientY }
+    followPointer()
+  }
+  const rest = () => {
+    pointer = null
+    targetYaw = initialYaw
+    targetPitch = initialPitch
+    requestDraw()
+  }
+  const onMotionPreference = () => { if (reducedMotion.matches) rest() }
   const resizeObserver = new ResizeObserver(resize)
   resizeObserver.observe(canvas)
   const intersectionObserver = new IntersectionObserver(([entry]) => {
     visible = entry.isIntersecting
-    if (visible) requestDraw()
+    if (visible) { followPointer(); requestDraw() }
   })
   intersectionObserver.observe(canvas)
   const onVisibility = () => { if (!document.hidden) requestDraw() }
   const onLoss = (event: Event) => { event.preventDefault(); onContextLost() }
   document.addEventListener("visibilitychange", onVisibility)
   canvas.addEventListener("webglcontextlost", onLoss)
+  window.addEventListener("pointermove", onPointer, { passive: true })
+  window.addEventListener("scroll", followPointer, { passive: true })
+  window.addEventListener("blur", rest)
+  document.documentElement.addEventListener("pointerleave", rest)
+  reducedMotion.addEventListener("change", onMotionPreference)
   resize()
 
   return {
     rotate(x: number, y: number) {
+      pointer = null
       model.rotation.y = (model.rotation.y + x) % (Math.PI * 2)
       model.rotation.x = THREE.MathUtils.clamp(model.rotation.x + y, -0.35, 0.35)
+      targetYaw = model.rotation.y
+      targetPitch = model.rotation.x
       requestDraw()
     },
     reset() {
+      pointer = null
+      targetYaw = initialYaw
+      targetPitch = initialPitch
       model.rotation.set(initialPitch, initialYaw, initialRoll)
       requestDraw()
     },
@@ -78,6 +127,11 @@ export function mountAvatar(canvas: HTMLCanvasElement, onContextLost: () => void
       intersectionObserver.disconnect()
       document.removeEventListener("visibilitychange", onVisibility)
       canvas.removeEventListener("webglcontextlost", onLoss)
+      window.removeEventListener("pointermove", onPointer)
+      window.removeEventListener("scroll", followPointer)
+      window.removeEventListener("blur", rest)
+      document.documentElement.removeEventListener("pointerleave", rest)
+      reducedMotion.removeEventListener("change", onMotionPreference)
       disposeAvatarModel(model)
       renderer.dispose()
       renderer.forceContextLoss()
