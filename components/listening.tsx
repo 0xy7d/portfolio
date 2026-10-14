@@ -44,7 +44,6 @@ export function Listening() {
         <a href={music.track.url ?? music.profileUrl} target="_blank" rel="noopener noreferrer" className="group flex min-w-0 items-start gap-3 rounded-md">
           {music.track.artworkUrl ? (
             // Native images work with the static export; only Apple artwork is accepted.
-            // eslint-disable-next-line @next/next/no-img-element
             <img src={music.track.artworkUrl} alt="" width={48} height={48} loading="lazy" referrerPolicy="no-referrer" className="h-12 w-12 shrink-0 rounded border border-border object-cover" />
           ) : <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded border border-border bg-muted"><Music2 aria-hidden="true" className="h-5 w-5 text-muted-foreground" /></span>}
           <div className="min-w-0 space-y-1 text-sm leading-relaxed">

@@ -9,6 +9,8 @@ Use Node.js 22 or newer and pnpm 8.
 ```sh
 pnpm install
 pnpm dev
+pnpm lint
+pnpm typecheck
 pnpm test
 pnpm build
 ```
