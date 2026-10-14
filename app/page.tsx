@@ -1,92 +1,45 @@
-"use client"
-
-import Link from "next/link"
-import { ArrowDown, ArrowUpRight, Moon, Sun } from "lucide-react"
-import { useEffect, useState } from "react"
+import { ArrowDown, ArrowUpRight } from "lucide-react"
 import { RecentThoughts } from "@/components/recent-thoughts"
 import { Listening } from "@/components/listening"
 import { Guestbook } from "@/components/guestbook"
 import { Avatar } from "@/components/avatar"
-import { experience, lab, projects } from "@/lib/portfolio"
+import { SiteNav } from "@/components/site-nav"
+import { ThemeToggle } from "@/components/theme-toggle"
+import { earlierExperience, experience, lab, projects, site, socials, tools } from "@/lib/portfolio"
 
-const sections = [
-  { id: "work", label: "Experience" },
-  { id: "projects", label: "Projects" },
-  { id: "thoughts", label: "Thoughts" },
-  { id: "guestbook", label: "Guestbook" },
-  { id: "connect", label: "Connect" },
-]
+const external = { target: "_blank", rel: "noopener noreferrer" } as const
+const current = experience[0]
+const [firstName, ...lastNames] = site.name.split(" ")
+
+function Interests() {
+  return site.interests.map((interest, index) => (
+    <span key={interest}>
+      {index > 0 && (index === site.interests.length - 1 ? ", and " : ", ")}
+      <span className="text-foreground">{interest}</span>
+    </span>
+  ))
+}
 
 export default function Home() {
-  const [isDark, setIsDark] = useState(false)
-  const [activeSection, setActiveSection] = useState("")
-
-  useEffect(() => {
-    try {
-      const dark = localStorage.getItem("portfolio-theme") === "dark"
-      setIsDark(dark)
-      document.documentElement.classList.toggle("dark", dark)
-    } catch {
-      // Keep the default theme when browser storage is unavailable.
-    }
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (entry.isIntersecting) setActiveSection(entry.target.id)
-        }
-      },
-      { rootMargin: "-15% 0px -65% 0px" },
-    )
-    for (const { id } of sections) {
-      const section = document.getElementById(id)
-      if (section) observer.observe(section)
-    }
-    return () => observer.disconnect()
-  }, [])
-
-  function toggleTheme() {
-    const dark = !isDark
-    setIsDark(dark)
-    document.documentElement.classList.toggle("dark", dark)
-    try {
-      localStorage.setItem("portfolio-theme", dark ? "dark" : "light")
-    } catch {
-      // Theme switching still works without storage.
-    }
-  }
-
   return (
     <div className="min-h-screen bg-background text-foreground font-mono">
       <a href="#main" className="skip-link">Skip to content</a>
-      <div className="sticky top-0 z-20 border-b border-border bg-background/95 backdrop-blur-sm">
-        <nav aria-label="Main navigation" className="page-width flex flex-wrap items-center justify-between gap-x-6 gap-y-3 py-4">
-          <Link href="#intro" className="shrink-0 text-sm tracking-wide">0xy7d</Link>
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs sm:gap-x-6 sm:text-sm">
-            {sections.map(({ id, label }) => (
-              <a key={id} href={`#${id}`} aria-current={activeSection === id ? "location" : undefined}
-                className={`transition-colors hover:text-foreground ${activeSection === id ? "text-foreground" : "text-muted-foreground"}`}>
-                {label}
-              </a>
-            ))}
-          </div>
-        </nav>
-      </div>
+      <SiteNav brand={site.handle} />
 
       <main id="main" tabIndex={-1} className="page-width">
         <header id="intro" className="section-anchor grid gap-12 pt-10 pb-20 sm:pt-14 sm:pb-28 lg:grid-cols-[minmax(0,1fr)_17rem] lg:gap-16 lg:py-32">
           <div className="min-w-0 space-y-8">
             <p className="eyebrow">Portfolio / 2026</p>
             <h1 className="text-5xl font-light leading-[1.05] tracking-tight sm:text-6xl lg:text-7xl">
-              Malik<br /><span className="text-muted-foreground">Diyaolu</span>
+              {firstName}<br /><span className="text-muted-foreground">{lastNames.join(" ")}</span>
             </h1>
             <div className="max-w-xl space-y-4 text-lg leading-relaxed text-muted-foreground sm:text-xl">
-              <p>Software engineer building useful systems from complex ideas. My research interests span <span className="text-foreground">embodied intelligence</span>, <span className="text-foreground">cybersecurity</span>, and <span className="text-foreground">Web3</span>.</p>
-              <p>I build and explore ideas at <a href={lab.url} target="_blank" rel="noopener noreferrer" className="inline-link">{lab.name}</a>.</p>
+              <p>{site.summary}</p>
+              <p>My research interests span <Interests />. I build and explore ideas at <a href={lab.url} {...external} className="inline-link">{lab.name}</a>.</p>
             </div>
             <div className="flex flex-wrap items-center gap-x-6 gap-y-3 text-sm text-muted-foreground">
               <span className="inline-flex items-center gap-2"><span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-emerald-600" />Available for work</span>
-              <span>Lagos, Nigeria</span>
+              <span>{site.location}</span>
             </div>
             <a href="#projects" className="inline-flex items-center gap-2 text-sm inline-link">Explore my work<ArrowDown aria-hidden="true" className="h-4 w-4" /></a>
           </div>
@@ -96,16 +49,16 @@ export default function Home() {
               <div className="space-y-3">
                 <p className="eyebrow">Currently</p>
                 <div className="space-y-1 text-sm leading-relaxed">
-                  <p>Software Engineer</p>
-                  <p className="text-muted-foreground">Crescent University</p>
-                  <p className="text-xs text-muted-foreground">Jun 2025 to Present</p>
+                  <p>{current.role}</p>
+                  <p className="text-muted-foreground">{current.company}</p>
+                  <p className="text-xs text-muted-foreground">{current.period}</p>
                 </div>
               </div>
               <div className="space-y-3">
                 <p className="eyebrow">Tools</p>
-                <div className="flex flex-wrap gap-2">
-                  {["Python", "Generative AI", "Next.js", "Go", "Rust"].map((skill) => <span key={skill} className="tag">{skill}</span>)}
-                </div>
+                <ul aria-label="Tools" className="flex flex-wrap gap-2">
+                  {tools.map((tool) => <li key={tool} className="tag">{tool}</li>)}
+                </ul>
               </div>
               <Listening />
             </aside>
@@ -119,28 +72,43 @@ export default function Home() {
           </div>
           <div className="divide-y divide-border">
             {experience.map((job) => (
-              <article key={`${job.company}-${job.period}`} className="grid items-start gap-4 py-8 first:pt-0 last:pb-0 sm:grid-cols-[7rem_minmax(0,1fr)] sm:gap-8">
-                <p className="text-sm leading-7 text-muted-foreground">{job.year}</p>
+              <article key={`${job.company}-${job.period}`} className="grid items-start gap-3 py-8 first:pt-0 sm:grid-cols-[9rem_minmax(0,1fr)] sm:gap-8">
+                <p className="text-xs leading-7 text-muted-foreground">{job.period}</p>
                 <div className="min-w-0 space-y-4">
                   <div className="space-y-1">
                     <h3 className="text-lg leading-snug sm:text-xl">{job.role}</h3>
                     <p className="text-sm text-muted-foreground">{job.company}</p>
-                    <p className="text-xs leading-relaxed text-muted-foreground">{job.period}</p>
                   </div>
-                  <p className="max-w-2xl text-sm leading-7 text-muted-foreground sm:text-base">{job.description}</p>
+                  <ul className="max-w-2xl list-disc space-y-2 pl-4 text-sm leading-7 text-muted-foreground marker:text-border sm:text-base">
+                    {job.highlights.map((highlight) => <li key={highlight}>{highlight}</li>)}
+                  </ul>
                   <ul aria-label={`${job.company} technologies`} className="flex flex-wrap items-start gap-2">
                     {job.tech.map((tech) => <li key={tech} className="tag">{tech}</li>)}
                   </ul>
                 </div>
               </article>
             ))}
+            <div className="grid items-start gap-3 pt-8 sm:grid-cols-[9rem_minmax(0,1fr)] sm:gap-8">
+              <h3 className="eyebrow leading-7">Earlier</h3>
+              <ul aria-label="Earlier roles" className="min-w-0 divide-y divide-border">
+                {earlierExperience.map((job) => (
+                  <li key={`${job.company}-${job.role}`} className="grid gap-1 py-3 first:pt-0 last:pb-0 sm:grid-cols-[minmax(0,1fr)_auto] sm:gap-6">
+                    <div className="min-w-0 text-sm leading-6">
+                      <p>{job.role}<span className="text-muted-foreground">, {job.company}</span></p>
+                      {"note" in job && <p className="text-muted-foreground">{job.note}</p>}
+                    </div>
+                    <p className="text-xs leading-6 text-muted-foreground">{job.period}</p>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
         </section>
 
         <section id="projects" aria-labelledby="projects-title" className="section-anchor section-space border-t border-border">
           <div className="section-heading">
             <h2 id="projects-title" className="section-title">Selected Projects</h2>
-            <a href={lab.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-sm inline-link">{lab.name}<ArrowUpRight aria-hidden="true" className="h-4 w-4" /></a>
+            <a href={lab.url} {...external} className="inline-flex items-center gap-2 text-sm inline-link">{lab.name}<ArrowUpRight aria-hidden="true" className="h-4 w-4" /></a>
           </div>
           <div className="space-y-6">
             {projects.map((project) => (
@@ -156,7 +124,7 @@ export default function Home() {
                   {project.tech && <ul aria-label={`${project.title} technologies`} className="flex flex-wrap items-start gap-2">
                     {project.tech.map((tech) => <li key={tech} className="tag">{tech}</li>)}
                   </ul>}
-                  <a href={project.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-sm inline-link">Explore the lab<ArrowUpRight aria-hidden="true" className="h-4 w-4" /></a>
+                  <a href={project.url} {...external} className="inline-flex items-center gap-2 text-sm inline-link">{project.title} at {lab.name}<ArrowUpRight aria-hidden="true" className="h-4 w-4" /></a>
                 </div>
               </article>
             ))}
@@ -166,7 +134,7 @@ export default function Home() {
         <section id="thoughts" aria-labelledby="thoughts-title" className="section-anchor section-space border-t border-border">
           <div className="section-heading">
             <h2 id="thoughts-title" className="section-title">Recent Thoughts</h2>
-            <a href="https://thoughts.0xy7d.xyz/" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-sm inline-link">All writing<ArrowUpRight aria-hidden="true" className="h-4 w-4" /></a>
+            <a href="https://thoughts.0xy7d.xyz/" {...external} className="inline-flex items-center gap-2 text-sm inline-link">All writing<ArrowUpRight aria-hidden="true" className="h-4 w-4" /></a>
           </div>
           <RecentThoughts />
         </section>
@@ -182,32 +150,26 @@ export default function Home() {
         <section id="connect" aria-labelledby="connect-title" className="section-anchor section-space border-t border-border">
           <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_17rem] lg:gap-16">
             <div className="min-w-0 space-y-6">
-              <h2 id="connect-title" className="section-title">Let's Connect</h2>
-              <p className="max-w-xl text-lg leading-relaxed text-muted-foreground">Open to research and collaborations in embodied intelligence, Web3, and systems engineering.</p>
-              <a href="mailto:holla@0xy7d.xyz" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-base inline-link">holla@0xy7d.xyz<ArrowUpRight aria-hidden="true" className="h-4 w-4" /></a>
+              <h2 id="connect-title" className="section-title">Let&apos;s Connect</h2>
+              <p className="max-w-xl text-lg leading-relaxed text-muted-foreground">Open to engineering roles on ML systems, and to research and collaborations in <Interests />.</p>
+              <a href={`mailto:${site.email}`} className="inline-flex items-center gap-2 text-base inline-link">{site.email}<ArrowUpRight aria-hidden="true" className="h-4 w-4" /></a>
             </div>
             <div className="space-y-4">
               <p className="eyebrow">Elsewhere</p>
               <ul className="divide-y divide-border">
-                {[
-                  { name: "GitHub", url: "https://github.com/0xy7d" },
-                  { name: "LinkedIn", url: "https://linkedin.com/in/malikdiyaolu" },
-                  { name: "Twitter", url: "https://x.com/0xy7d" },
-                ].map((social) => <li key={social.name}><a href={social.url} target="_blank" rel="noopener noreferrer" className="group flex items-center justify-between py-3 text-sm hover:text-muted-foreground">{social.name}<ArrowUpRight aria-hidden="true" className="h-4 w-4" /></a></li>)}
+                {socials.map((social) => <li key={social.name}><a href={social.url} {...external} className="group flex items-center justify-between py-3 text-sm hover:text-muted-foreground">{social.name}<ArrowUpRight aria-hidden="true" className="h-4 w-4" /></a></li>)}
               </ul>
             </div>
           </div>
         </section>
 
-        <footer className="flex flex-wrap items-center justify-between gap-6 border-t border-border py-8">
+        <footer className="flex flex-wrap items-end justify-between gap-6 border-t border-border py-8">
           <div className="space-y-2 text-xs leading-relaxed text-muted-foreground">
-            <p>© 2026 Malik Diyaolu.</p>
-            <p>Inspired by <a href="https://v0.app/@felixmacaspac" target="_blank" rel="noopener noreferrer" className="inline-link">@felixmacaspac</a></p>
+            <p>© 2026 {site.name}.</p>
+            <p>Static Next.js on Cloudflare&apos;s edge, with Pages Functions, D1, and Three.js. <a href={site.source} {...external} className="inline-link">Source</a></p>
+            <p>Inspired by <a href="https://v0.app/@felixmacaspac" {...external} className="inline-link">@felixmacaspac</a></p>
           </div>
-          <button onClick={toggleTheme} type="button" aria-label={`Switch to ${isDark ? "light" : "dark"} theme`} className="inline-flex items-center gap-2 rounded-md border border-border px-3 py-2 text-xs hover:bg-muted">
-            {isDark ? <Sun aria-hidden="true" className="h-4 w-4" /> : <Moon aria-hidden="true" className="h-4 w-4" />}
-            {isDark ? "Light" : "Dark"}
-          </button>
+          <ThemeToggle />
         </footer>
       </main>
     </div>
