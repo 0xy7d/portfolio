@@ -16,7 +16,7 @@ export default function OpengraphImage() {
             <span>Malik</span>
             <span style={{ color: "#737373" }}>Diyaolu</span>
           </div>
-          <div style={{ display: "flex", fontSize: 30, lineHeight: 1.4, color: "#525252", maxWidth: 960 }}>{site.summary}</div>
+          <div style={{ display: "flex", fontSize: 36, lineHeight: 1.4, color: "#525252", maxWidth: 960 }}>{site.summary}</div>
         </div>
         <div style={{ display: "flex", justifyContent: "space-between", fontSize: 26, color: "#737373", borderTop: "2px solid #e5e5e5", paddingTop: 28 }}>
           <span>{site.url.replace("https://", "")}</span>

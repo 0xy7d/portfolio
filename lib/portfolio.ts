@@ -7,7 +7,7 @@ export const site = {
   email: "holla@0xy7d.xyz",
   source: "https://github.com/0xy7d/portfolio",
   location: "Lagos, Nigeria",
-  summary: "Software engineer building ML systems and the products around them: retrieval, document intelligence, real-time inference, and LLM reasoning.",
+  summary: "Software Engineer",
   interests: ["embodied intelligence", "cybersecurity", "Web3"],
 }
 
