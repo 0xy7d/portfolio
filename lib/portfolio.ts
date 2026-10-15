@@ -1,7 +1,7 @@
 export const lab = { name: "Klorion Labs", url: "https://klorion.com" }
 
 export const site = {
-  name: "Malik Diyaolu",
+  name: "Maleek Diyaolu",
   handle: "0xy7d",
   url: "https://0xy7d.xyz",
   email: "holla@0xy7d.xyz",
