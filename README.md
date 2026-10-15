@@ -1,4 +1,4 @@
-# Malik Diyaolu's portfolio
+# Maleek Diyaolu's portfolio
 
 Next.js portfolio, statically exported to Cloudflare Pages at https://0xy7d.xyz.
 

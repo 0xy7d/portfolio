@@ -13,7 +13,7 @@ const shareTechMono = Share_Tech_Mono({
 })
 
 const title = `${site.handle} | ${site.name}`
-const description = `${site.summary} Research interests in ${site.interests.slice(0, -1).join(", ")}, and ${site.interests.at(-1)}.`
+const description = `${site.summary}. Research interests in ${site.interests.slice(0, -1).join(", ")}, and ${site.interests.at(-1)}.`
 
 export const metadata: Metadata = {
   title,

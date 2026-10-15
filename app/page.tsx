@@ -34,7 +34,7 @@ export default function Home() {
               {firstName}<br /><span className="text-muted-foreground">{lastNames.join(" ")}</span>
             </h1>
             <div className="max-w-xl space-y-4 text-lg leading-relaxed text-muted-foreground sm:text-xl">
-              <p>{site.summary}</p>
+              <p>{site.summary}.</p>
               <p>My research interests span <Interests />. I build and explore ideas at <a href={lab.url} {...external} className="inline-link">{lab.name}</a>.</p>
             </div>
             <div className="flex flex-wrap items-center gap-x-6 gap-y-3 text-sm text-muted-foreground">
