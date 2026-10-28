@@ -111,7 +111,10 @@ export default function Home() {
           </div>
           <div className="divide-y divide-border">
             <article className="grid items-start gap-3 pb-8 sm:grid-cols-[9rem_minmax(0,1fr)] sm:gap-8">
-              <p className="eyebrow leading-7">Postgraduate</p>
+              <div className="space-y-1">
+                <p className="eyebrow leading-7">Postgraduate</p>
+                <p className="text-xs leading-6 text-muted-foreground">2026 to Present</p>
+              </div>
               <div className="min-w-0 space-y-5">
                 <div className="space-y-1">
                   <h3 className="text-lg leading-snug sm:text-xl">MSc, Computer Science</h3>
@@ -130,10 +133,21 @@ export default function Home() {
               </div>
             </article>
             <article className="grid items-start gap-3 pt-8 sm:grid-cols-[9rem_minmax(0,1fr)] sm:gap-8">
-              <p className="eyebrow leading-7">Undergraduate</p>
-              <div className="min-w-0 space-y-1">
-                <h3 className="text-lg leading-snug sm:text-xl">BSc, Computer Science</h3>
-                <p className="text-sm text-muted-foreground">Federal University of Agriculture</p>
+              <div className="space-y-1">
+                <p className="eyebrow leading-7">Undergraduate</p>
+                <p className="text-xs leading-6 text-muted-foreground">2018 to 2023</p>
+              </div>
+              <div className="min-w-0 space-y-5">
+                <div className="space-y-1">
+                  <h3 className="text-lg leading-snug sm:text-xl">BSc, Computer Science</h3>
+                  <p className="text-sm text-muted-foreground">Federal University of Agriculture</p>
+                </div>
+                <dl className="max-w-2xl text-sm leading-7 sm:text-base">
+                  <div>
+                    <dt className="eyebrow">Project</dt>
+                    <dd className="text-muted-foreground">Rotten Fruit Detection Using Convolutional Neural Network Algorithm</dd>
+                  </div>
+                </dl>
               </div>
             </article>
           </div>
