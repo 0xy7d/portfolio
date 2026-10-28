@@ -105,6 +105,40 @@ export default function Home() {
           </div>
         </section>
 
+        <section id="education" aria-labelledby="education-title" className="section-anchor section-space border-t border-border">
+          <div className="section-heading">
+            <h2 id="education-title" className="section-title">Academic Background</h2>
+          </div>
+          <div className="divide-y divide-border">
+            <article className="grid items-start gap-3 pb-8 sm:grid-cols-[9rem_minmax(0,1fr)] sm:gap-8">
+              <p className="eyebrow leading-7">Postgraduate</p>
+              <div className="min-w-0 space-y-5">
+                <div className="space-y-1">
+                  <h3 className="text-lg leading-snug sm:text-xl">MSc, Computer Science</h3>
+                  <p className="text-sm text-muted-foreground">University of Lagos</p>
+                </div>
+                <dl className="max-w-2xl space-y-4 text-sm leading-7 sm:text-base">
+                  <div>
+                    <dt className="eyebrow">Seminar</dt>
+                    <dd className="text-muted-foreground">A Review of Self-Evolution Techniques in LLMs</dd>
+                  </div>
+                  <div>
+                    <dt className="eyebrow">Thesis</dt>
+                    <dd className="text-muted-foreground">Contextual Operator Selection for Evolutionary Reinforcement Learning</dd>
+                  </div>
+                </dl>
+              </div>
+            </article>
+            <article className="grid items-start gap-3 pt-8 sm:grid-cols-[9rem_minmax(0,1fr)] sm:gap-8">
+              <p className="eyebrow leading-7">Undergraduate</p>
+              <div className="min-w-0 space-y-1">
+                <h3 className="text-lg leading-snug sm:text-xl">BSc, Computer Science</h3>
+                <p className="text-sm text-muted-foreground">Federal University of Agriculture</p>
+              </div>
+            </article>
+          </div>
+        </section>
+
         <section id="projects" aria-labelledby="projects-title" className="section-anchor section-space border-t border-border">
           <div className="section-heading">
             <h2 id="projects-title" className="section-title">Selected Projects</h2>
