@@ -132,7 +132,7 @@ export default function Home() {
             <article className="grid items-start gap-3 pt-8 sm:grid-cols-[9rem_minmax(0,1fr)] sm:gap-8">
               <p className="eyebrow leading-7">Undergraduate</p>
               <div className="min-w-0 space-y-1">
-                <h3 className="text-lg leading-snug sm:text-xl">Computer Science</h3>
+                <h3 className="text-lg leading-snug sm:text-xl">BSc, Computer Science</h3>
                 <p className="text-sm text-muted-foreground">Federal University of Agriculture</p>
               </div>
             </article>
