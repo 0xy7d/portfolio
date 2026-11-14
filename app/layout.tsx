@@ -33,7 +33,7 @@ const person = {
   email: `mailto:${site.email}`,
   jobTitle: "Software Engineer",
   address: { "@type": "PostalAddress", addressLocality: "Lagos", addressCountry: "NG" },
-  knowsAbout: ["Machine Learning", "Retrieval-Augmented Generation", "Document Intelligence", ...site.interests],
+  knowsAbout: ["Adaptive Learning Systems", "Evolutionary Reinforcement Learning", "Embodied Intelligence", "Self-Evolving Language Models", "AI Ethics", "AI Safety and Governance", ...site.interests],
   sameAs: socials.map((social) => social.url),
 }
 
