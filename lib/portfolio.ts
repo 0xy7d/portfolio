@@ -7,8 +7,8 @@ export const site = {
   email: "holla@0xy7d.xyz",
   source: "https://github.com/0xy7d/portfolio",
   location: "Lagos, Nigeria",
-  summary: "Software Engineer",
-  interests: ["embodied intelligence", "cybersecurity", "Web3"],
+  summary: "AI/ML engineer researching adaptive learning systems, evolutionary reinforcement learning, and embodied intelligence",
+  interests: ["adaptive learning systems", "evolutionary reinforcement learning", "embodied intelligence"],
 }
 
 export const socials = [
@@ -72,6 +72,46 @@ export const earlierExperience = [
   { role: "Co-Founder & Backend Engineer", company: "Fashy", period: "2019 to 2021", note: "Multi-country mobile services with messaging and notifications." },
   { role: "Software Engineer Intern", company: "Petabyte Esports", period: "2018 to 2019" },
 ] as const
+
+export type ResearchItem = {
+  slug: string
+  title: string
+  status: string
+  type: string
+  description: string
+  year: string
+  tags: readonly string[]
+}
+
+export const research: readonly ResearchItem[] = [
+  {
+    slug: "contextual-operator-selection",
+    title: "Contextual Operator Selection for Evolutionary Reinforcement Learning",
+    status: "In progress",
+    type: "MSc thesis",
+    description: "Investigating contextual selection between evolutionary mutation and critic-guided policy improvement.",
+    year: "2026",
+    tags: ["Reinforcement Learning", "Evolutionary Computation"],
+  },
+  {
+    slug: "self-evolution-techniques-in-llms",
+    title: "A Review of Self-Evolution Techniques in LLMs",
+    status: "In development",
+    type: "MSc seminar",
+    description: "Exploring mechanisms through which language models improve their capabilities through feedback, generated data, and iterative adaptation.",
+    year: "2026",
+    tags: ["LLMs", "Self-Improving Systems"],
+  },
+  {
+    slug: "rotten-fruit-detection",
+    title: "Rotten Fruit Detection Using Convolutional Neural Networks",
+    status: "Undergraduate project",
+    type: "BSc project",
+    description: "An undergraduate computer vision research project focused on detecting rotten fruit with convolutional neural networks. Publication potential is to be evaluated.",
+    year: "2023",
+    tags: ["Computer Vision", "Agricultural Applications"],
+  },
+]
 
 type Project = {
   title: string

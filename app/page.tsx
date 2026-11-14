@@ -1,3 +1,4 @@
+import Link from "next/link"
 import { ArrowDown, ArrowUpRight } from "lucide-react"
 import { RecentThoughts } from "@/components/recent-thoughts"
 import { Listening } from "@/components/listening"
@@ -5,7 +6,7 @@ import { Guestbook } from "@/components/guestbook"
 import { Avatar } from "@/components/avatar"
 import { SiteNav } from "@/components/site-nav"
 import { ThemeToggle } from "@/components/theme-toggle"
-import { earlierExperience, experience, lab, projects, site, socials, tools } from "@/lib/portfolio"
+import { earlierExperience, experience, lab, projects, research, site, socials, tools } from "@/lib/portfolio"
 
 const external = { target: "_blank", rel: "noopener noreferrer" } as const
 const current = experience[0]
@@ -35,7 +36,7 @@ export default function Home() {
             </h1>
             <div className="max-w-xl space-y-4 text-lg leading-relaxed text-muted-foreground sm:text-xl">
               <p>{site.summary}.</p>
-              <p>My research interests span <Interests />. I build and explore ideas at <a href={lab.url} {...external} className="inline-link">{lab.name}</a>.</p>
+              <p>My work centers on <Interests />. I build and explore ideas at <a href={lab.url} {...external} className="inline-link">{lab.name}</a>.</p>
             </div>
             <div className="flex flex-wrap items-center gap-x-6 gap-y-3 text-sm text-muted-foreground">
               <span className="inline-flex items-center gap-2"><span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-emerald-600" />Available for work</span>
@@ -150,6 +151,34 @@ export default function Home() {
                 </dl>
               </div>
             </article>
+          </div>
+        </section>
+
+        <section id="research" aria-labelledby="research-title" className="section-anchor section-space border-t border-border">
+          <div className="section-heading">
+            <h2 id="research-title" className="section-title">Research &amp; Publications</h2>
+            <Link href="/research" className="inline-flex items-center gap-2 text-sm inline-link">Research index<ArrowUpRight aria-hidden="true" className="h-4 w-4" /></Link>
+          </div>
+          <p className="mb-10 max-w-2xl text-lg leading-relaxed text-muted-foreground">My research follows adaptive learning systems from evolutionary reinforcement learning to self-evolving language models and embodied intelligence.</p>
+          <div className="divide-y divide-border">
+            {research.map((item) => (
+              <article key={item.slug} className="grid items-start gap-3 py-8 first:pt-0 sm:grid-cols-[9rem_minmax(0,1fr)] sm:gap-8">
+                <div className="space-y-1">
+                  <p className="eyebrow leading-7">{item.status}</p>
+                  <p className="text-xs leading-6 text-muted-foreground">{item.year}</p>
+                </div>
+                <div className="min-w-0 space-y-4">
+                  <div className="space-y-1">
+                    <h3 className="text-lg leading-snug sm:text-xl"><Link href={`/research/${item.slug}`} className="inline-link">{item.title}</Link></h3>
+                    <p className="text-sm text-muted-foreground">{item.type}</p>
+                  </div>
+                  <p className="max-w-2xl text-sm leading-7 text-muted-foreground sm:text-base">{item.description}</p>
+                  <ul aria-label={`${item.title} research areas`} className="flex flex-wrap items-start gap-2">
+                    {item.tags.map((tag) => <li key={tag} className="tag">{tag}</li>)}
+                  </ul>
+                </div>
+              </article>
+            ))}
           </div>
         </section>
 
