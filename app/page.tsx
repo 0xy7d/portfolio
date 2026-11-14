@@ -1,3 +1,4 @@
+import Link from "next/link"
 import { ArrowDown, ArrowUpRight } from "lucide-react"
 import { RecentThoughts } from "@/components/recent-thoughts"
 import { Listening } from "@/components/listening"
@@ -156,7 +157,7 @@ export default function Home() {
         <section id="research" aria-labelledby="research-title" className="section-anchor section-space border-t border-border">
           <div className="section-heading">
             <h2 id="research-title" className="section-title">Research &amp; Publications</h2>
-            <a href="/research" className="inline-flex items-center gap-2 text-sm inline-link">Research index<ArrowUpRight aria-hidden="true" className="h-4 w-4" /></a>
+            <Link href="/research" className="inline-flex items-center gap-2 text-sm inline-link">Research index<ArrowUpRight aria-hidden="true" className="h-4 w-4" /></Link>
           </div>
           <p className="mb-10 max-w-2xl text-lg leading-relaxed text-muted-foreground">My research follows adaptive learning systems from evolutionary reinforcement learning to self-evolving language models and embodied intelligence.</p>
           <div className="divide-y divide-border">
@@ -168,7 +169,7 @@ export default function Home() {
                 </div>
                 <div className="min-w-0 space-y-4">
                   <div className="space-y-1">
-                    <h3 className="text-lg leading-snug sm:text-xl"><a href={`/research/${item.slug}`} className="inline-link">{item.title}</a></h3>
+                    <h3 className="text-lg leading-snug sm:text-xl"><Link href={`/research/${item.slug}`} className="inline-link">{item.title}</Link></h3>
                     <p className="text-sm text-muted-foreground">{item.type}</p>
                   </div>
                   <p className="max-w-2xl text-sm leading-7 text-muted-foreground sm:text-base">{item.description}</p>
